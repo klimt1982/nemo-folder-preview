@@ -116,6 +116,8 @@ class Conf(dict):
         self['pictures_keepdefaulticon'] = False
         self['pictures_usegnomefolder'] = True
         self['pictures_maxthumbs'] = 3
+        self['pictures_theme'] = 'auto'
+        self['pictures_theme'] = 'auto'
         self['pictures_paths'] = []
         self['pictures_fg'] = os.path.join(BASE_PATH, "pictures_fg.png")
         self['pictures_bg'] = os.path.join(BASE_PATH, "pictures_bg.png")
@@ -184,6 +186,16 @@ class Conf(dict):
                         else:
                             value = False
                         self[current_section + "_" + key] = value
+                    #String key : theme
+                    elif re.match(r'\s*theme\s*=\s*"([^"]+)"\s*', line, re.I):
+                        self[current_section + "_theme"] = re.match(
+                            r'\s*theme\s*=\s*"([^"]+)"\s*', line, re.I
+                        ).group(1)
+                    #String key : theme
+                    elif re.match(r'\s*theme\s*=\s*"([^"]+)"\s*', line, re.I):
+                        self[current_section + "_theme"] = re.match(
+                            r'\s*theme\s*=\s*"([^"]+)"\s*', line, re.I
+                        ).group(1)
                     #String key : path
                     elif re.match(r"\s*(path|PATH|Path)\s*=\s*\"(.+)\"\s*", line):
                         match = re.match(r"\s*(path|PATH|Path)\s*=\s*\"(.+)\"\s*", line)
@@ -208,6 +220,128 @@ class Conf(dict):
                 self["music_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
                 self["pictures_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
 
+
+
+def prepare_picture_theme(conf):
+    """Generate picture-folder frame assets from a Mint-Y icon theme."""
+    from PIL import ImageDraw
+
+    requested_theme = conf.get("pictures_theme", "auto")
+    theme = requested_theme
+
+    if theme == "auto":
+        theme = os.popen(
+            "gsettings get org.cinnamon.desktop.interface icon-theme 2>/dev/null"
+        ).read().strip().strip("'")
+
+    if not theme.startswith("Mint-Y") or "/" in theme:
+        theme = "Mint-Y"
+
+    folder_path = os.path.join(
+        "/usr/share/icons", theme, "places", "128", "folder.png"
+    )
+    if not os.path.isfile(folder_path):
+        theme = "Mint-Y"
+        folder_path = os.path.join(
+            "/usr/share/icons", theme, "places", "128", "folder.png"
+        )
+
+    cache_dir = os.path.join(
+        os.environ.get("HOME", ""), ".cache", "cover-thumbnailer", "themes", theme
+    )
+    os.makedirs(cache_dir, exist_ok=True)
+
+    bg_path = os.path.join(cache_dir, "pictures_bg.png")
+    fg_path = os.path.join(cache_dir, "pictures_fg.png")
+
+    if not (os.path.isfile(bg_path) and os.path.isfile(fg_path)):
+        size = 128
+        scale = 4
+        inner = (14, 42, 114, 110)
+
+        def box(coords):
+            return tuple(value * scale for value in coords)
+
+        folder = Image.open(folder_path).convert("RGBA")
+        base_color = folder.getpixel((64, 80))
+
+        bg = Image.new("RGBA", (size * scale, size * scale), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(bg)
+        draw.rounded_rectangle(
+            box(inner), radius=5 * scale, fill=base_color
+        )
+        bg.resize((size, size), Image.Resampling.LANCZOS).save(bg_path)
+
+        fg = folder.resize((size * scale, size * scale), Image.Resampling.LANCZOS)
+        alpha = fg.getchannel("A")
+        draw = ImageDraw.Draw(alpha)
+        draw.rounded_rectangle(box(inner), radius=5 * scale, fill=0)
+        fg.putalpha(alpha)
+        fg.resize((size, size), Image.Resampling.LANCZOS).save(fg_path)
+
+    conf["pictures_bg"] = bg_path
+    conf["pictures_fg"] = fg_path
+
+
+def prepare_picture_theme(conf):
+    """Generate picture-folder frame assets from a Mint-Y icon theme."""
+    from PIL import ImageDraw
+
+    requested_theme = conf.get("pictures_theme", "auto")
+    theme = requested_theme
+
+    if theme == "auto":
+        theme = os.popen(
+            "gsettings get org.cinnamon.desktop.interface icon-theme 2>/dev/null"
+        ).read().strip().strip("'")
+
+    if not theme.startswith("Mint-Y") or "/" in theme:
+        theme = "Mint-Y"
+
+    folder_path = os.path.join(
+        "/usr/share/icons", theme, "places", "128", "folder.png"
+    )
+    if not os.path.isfile(folder_path):
+        theme = "Mint-Y"
+        folder_path = os.path.join(
+            "/usr/share/icons", theme, "places", "128", "folder.png"
+        )
+
+    cache_dir = os.path.join(
+        os.environ.get("HOME", ""), ".cache", "cover-thumbnailer", "themes", theme
+    )
+    os.makedirs(cache_dir, exist_ok=True)
+
+    bg_path = os.path.join(cache_dir, "pictures_bg.png")
+    fg_path = os.path.join(cache_dir, "pictures_fg.png")
+
+    if not (os.path.isfile(bg_path) and os.path.isfile(fg_path)):
+        size = 128
+        scale = 4
+        inner = (14, 42, 114, 110)
+
+        def box(coords):
+            return tuple(value * scale for value in coords)
+
+        folder = Image.open(folder_path).convert("RGBA")
+        base_color = folder.getpixel((64, 80))
+
+        bg = Image.new("RGBA", (size * scale, size * scale), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(bg)
+        draw.rounded_rectangle(
+            box(inner), radius=5 * scale, fill=base_color
+        )
+        bg.resize((size, size), Image.Resampling.LANCZOS).save(bg_path)
+
+        fg = folder.resize((size * scale, size * scale), Image.Resampling.LANCZOS)
+        alpha = fg.getchannel("A")
+        draw = ImageDraw.Draw(alpha)
+        draw.rounded_rectangle(box(inner), radius=5 * scale, fill=0)
+        fg.putalpha(alpha)
+        fg.resize((size, size), Image.Resampling.LANCZOS).save(fg_path)
+
+    conf["pictures_bg"] = bg_path
+    conf["pictures_fg"] = fg_path
 
 class Thumb(object):
     """ Makes thumbnails.
@@ -530,6 +664,7 @@ if __name__ == "__main__":
 
     #Load configuration
     CONF = Conf()
+    prepare_picture_theme(CONF)
 
     #Ignored folders
     if match_path(INPUT_FOLDER, CONF['ignored_paths']) \
