@@ -343,164 +343,46 @@ class Thumb(object):
         self.thumb = bg
 
     def pictures_thumbnail(self, bg_picture, fg_picture, max_pictures=3):
-        """ Makes thumbnails for picture folders.
-
-        Arguments:
-          * bg_picture -- the background picture
-          * fg_picture -- the foreground picture
-
-        Keyword argument:
-          * max_pictures -- the maximum number of pictures on the thumbnail
-        """
-        #Background
+        """Create a Mint-Y-style folder preview for picture folders."""
         bg = Image.open(bg_picture).convert("RGBA")
-        bg_width = bg.size[0]
-        bg_height = bg.size[1]
-        picts = []
-        number_of_pictures = 0
-        #One picture
-        if len(self.img) == 1 or max_pictures == 1 and len(self.img) > 0:
-            number_of_pictures = 1
-            thumb = self.thumbnailize(
-                    self.img[0],
-                    bg_width - 20,
-                    bg_height - 20,
-                    crop=False
-                    )
-            x = int((bg_width - thumb.size[0]) / 2)
-            y = int((bg_height - thumb.size[1]) / 2)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-        #Two pictures
-        elif len(self.img) == 2 or max_pictures == 2 and len(self.img) > 0:
-            number_of_pictures = 2
-            #Thumb 0
-            thumb = self.thumbnailize(
-                    self.img[0],
-                    bg_width - 20,
-                    int(0.53*bg_height),
-                    crop=False
-                    )
-            picts.append({
-                    'thumb': thumb,
-                    'x': 10,
-                    'y': 5
-                    })
-            #Thumb 1
-            thumb = self.thumbnailize(
-                    self.img[1],
-                    bg_width - 20,
-                    int(0.53*bg_height),
-                    crop=False
-                    )
-            x = bg_width - thumb.size[0] - 10
-            y = bg_height - thumb.size[1] - 5
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-        #Three pictures
-        elif len(self.img) == 3 or max_pictures == 3 and len(self.img) > 0:
-            number_of_pictures = 3
-            #Thumb 0
-            thumb = self.thumbnailize(self.img[0], 49, 56, crop=False)
-            picts.append({
-                    'thumb': thumb,
-                    'x': 20,
-                    'y': 5
-                    })
-            #Thumb 1
-            thumb = self.thumbnailize(self.img[1], 49, 56, crop=False)
-            x = int(bg_width - thumb.size[0] - 5)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': 5
-                    })
-            #Thumb 2
-            h = int(bg_height - max(picts[0]['thumb'].size[1], picts[1]['thumb'].size[1]) - 15)
-            thumb = self.thumbnailize(self.img[2], 103, h, crop=False)
-            x = int((bg_width - 15 - thumb.size[0])/2 + 15)
-            y = int(bg_height - thumb.size[1] - 5)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-        #Four pictures
-        elif len(self.img) == 4 or max_pictures == 4 and len(self.img) > 0:
-            number_of_pictures = 4
-            #Thumb 0
-            thumb = self.thumbnailize(
-                    self.img[0],
-                    int(bg_width/2 - 7.5),
-                    int(bg_height/2 - 7.5),
-                    crop=False
-                    )
-            x = int(1*bg_width/4 - thumb.size[0]/2)
-            y = int(1*bg_height/4 - thumb.size[1]/2)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-            #Thumb 1
-            thumb = self.thumbnailize(
-                    self.img[1],
-                    int(bg_width/2 - 7.5),
-                    int(bg_height/2 - 7.5),
-                    crop=False
-                    )
-            x = int(3*bg_width/4 - thumb.size[0]/2)
-            y = int(1*bg_height/4 - thumb.size[1]/2)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-            #Thumb 2
-            thumb = self.thumbnailize(
-                    self.img[2],
-                    int(bg_width/2 - 7.5),
-                    int(bg_height/2 - 7.5),
-                    crop=False
-                    )
-            x = int(1*bg_width/4 - thumb.size[0]/2)
-            y = int(3*bg_height/4 - thumb.size[1]/2)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
-            #Thumb 3
-            thumb = self.thumbnailize(
-                    self.img[3],
-                    int(bg_width/2 - 7.5),
-                    int(bg_height/2 - 7.5),
-                    crop=False
-                    )
-            x = int(3*bg_width/4 - thumb.size[0]/2)
-            y = int(3*bg_height/4 - thumb.size[1]/2)
-            picts.append({
-                    'thumb': thumb,
-                    'x': x,
-                    'y': y
-                    })
 
-        #Paste pictures on background
-        for i in range(0, number_of_pictures):
-            bg.paste(
-                    picts[i]['thumb'],
-                    (picts[i]['x'], picts[i]['y']),
-                    picts[i]['thumb']
-                    )
-        #Paste forground on background+pictures
+        # Visible area inside the folder frame.
+        left, top, right, bottom = 14, 42, 114, 110
+        width, height = right - left, bottom - top
+        gap = 3
+        count = min(len(self.img), max(1, int(max_pictures)), 4)
+
+        layouts = {
+            1: [(0, 0, width, height)],
+            2: [
+                (0, 0, (width - gap) // 2, height),
+                ((width + gap) // 2, 0, width, height),
+            ],
+            3: [
+                (0, 0, (width - gap) // 2, (height - gap) // 2),
+                ((width + gap) // 2, 0, width, (height - gap) // 2),
+                (0, (height + gap) // 2, width, height),
+            ],
+            4: [
+                (0, 0, (width - gap) // 2, (height - gap) // 2),
+                ((width + gap) // 2, 0, width, (height - gap) // 2),
+                (0, (height + gap) // 2, (width - gap) // 2, height),
+                ((width + gap) // 2, (height + gap) // 2, width, height),
+            ],
+        }
+
+        content = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        for index, (x1, y1, x2, y2) in enumerate(layouts.get(count, [])):
+            thumb = self.thumbnailize(
+                self.img[index], x2 - x1, y2 - y1, crop=True
+            )
+            x = x1 + (x2 - x1 - thumb.size[0]) // 2
+            y = y1 + (y2 - y1 - thumb.size[1]) // 2
+            content.paste(thumb, (x, y), thumb)
+
+        bg.alpha_composite(content, (left, top))
         fg = Image.open(fg_picture).convert("RGBA")
-        bg.paste(fg, (0, 0), fg)
+        bg.alpha_composite(fg)
         self.thumb = bg
 
     def other_thumbnail(self, fg_picture):
