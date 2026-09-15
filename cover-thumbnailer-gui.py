@@ -96,6 +96,7 @@ class Conf(dict):
         self['pictures_keepdefaulticon'] = False
         self['pictures_usegnomefolder'] = True
         self['pictures_maxthumbs'] = 3
+        self['pictures_theme'] = 'auto'
         self['pictures_paths'] = []
         self['pictures_gnomefolderpath'] = _("<None>")
         #Other
@@ -214,6 +215,7 @@ class Conf(dict):
             user_conf_file.write(self._write_bool("pictures_keepdefaulticon"))
             user_conf_file.write(self._write_bool("pictures_usegnomefolder"))
             user_conf_file.write(self._write_int("pictures_maxthumbs"))
+            user_conf_file.write('theme = "%s"\\n' % self["pictures_theme"])
             user_conf_file.write(self._write_list("pictures_paths"))
             #Other
             user_conf_file.write("\n[OTHER]\n")
@@ -323,6 +325,26 @@ class MainWin(object):
         self.cbPicturesKeepFIcon = win.get_object("cbPicturesKeepFIcon")
         #spinbtn_maxThumbs Spin Button
         self.spinbtn_maxThumbs = win.get_object("spinbtn_maxThumbs")
+
+        # Folder theme selector
+        self.cmbPicturesTheme = gtk.ComboBoxText()
+        self.cmbPicturesTheme.append("auto", _("Automatic (current Cinnamon theme)"))
+        for theme in sorted(
+                item for item in os.listdir("/usr/share/icons")
+                if item.startswith("Mint-Y")
+        ):
+            self.cmbPicturesTheme.append(theme, theme)
+
+        theme_row = gtk.Box(spacing=5)
+        theme_label = gtk.Label(label=_("Folder theme:"))
+        theme_label.set_xalign(0)
+        theme_row.pack_start(theme_label, False, False, 0)
+        theme_row.pack_start(self.cmbPicturesTheme, True, True, 0)
+        win.get_object("vbox9").pack_start(theme_row, False, False, 5)
+        self.cmbPicturesTheme.connect(
+            "changed", self.on_cmbPicturesTheme_changed
+        )
+        theme_row.show_all()
 
         ### OTHER ###
         #Enable checkBox
@@ -442,6 +464,11 @@ class MainWin(object):
 
     def on_spinbtn_maxThumbs_value_changed(self, widget):
         CONF['pictures_maxthumbs'] = int(self.spinbtn_maxThumbs.get_value())
+
+    def on_cmbPicturesTheme_changed(self, widget):
+        theme = self.cmbPicturesTheme.get_active_id()
+        if theme:
+            CONF['pictures_theme'] = theme
 
     def on_cb_useGnomePictures_toggled(self, widget):
         CONF['pictures_usegnomefolder'] = self.cb_useGnomePictures.get_active()
@@ -626,6 +653,8 @@ def loadInterface(gui):
         gui.spinbtn_maxThumbs.set_value(1)
     else:
         gui.spinbtn_maxThumbs.set_value(CONF['pictures_maxthumbs'])
+    if not gui.cmbPicturesTheme.set_active_id(CONF['pictures_theme']):
+        gui.cmbPicturesTheme.set_active_id("auto")
     #Other
     gui.cbOtherEnable.set_active(CONF['other_enabled'])
     #Ignored
