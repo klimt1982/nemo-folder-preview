@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Original flat application mark: a folder containing a 2x2 preview mosaic. -->
+  <path fill="#2f974f" d="M10 30h38l9 10h61v72H10z"/>
+  <path fill="#1e7439" d="M10 30h38l9 10H10z"/>
+  <path fill="#46b966" d="M14 43h100v66H14z"/>
+  <path fill="#257f42" d="M14 43h100v4H14z"/>
+  <g stroke="#f4f4f4" stroke-width="3" stroke-linejoin="miter">
+    <rect x="25" y="56" width="36" height="22" fill="#db7d63"/>
+    <rect x="64" y="56" width="36" height="22" fill="#d2a841"/>
+    <rect x="25" y="81" width="36" height="18" fill="#57aeb0"/>
+    <rect x="64" y="81" width="36" height="18" fill="#8063a7"/>
+  </g>
+</svg>

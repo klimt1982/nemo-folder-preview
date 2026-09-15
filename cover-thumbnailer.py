@@ -36,7 +36,7 @@
 
 """Generates thumbnails for nautilus' folders.
 
-Cover thumbnailer generates thumbnail that will be displayed instead of the
+Nemo Folder Preview generates thumbnails that are displayed instead of the
 default folder icons. It has a specific presentation for music and pictures
 folders, and a generic one for other folders.
 
@@ -652,7 +652,7 @@ if __name__ == "__main__":
         OUTPUT_FILE = gvfs_uri_to_path(sys.argv[2])
     else:
         #Display informations and usage
-        print("Cover thumbnailer - %s" % __doc__)
+        print("Nemo Folder Preview - %s" % __doc__)
         print("Version: %s" % __version__)
         print(__copyright__)
         sys.exit(1)

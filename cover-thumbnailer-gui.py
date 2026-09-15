@@ -34,9 +34,9 @@
 #########################################################################
 
 
-"""Configuration GUI for Cover Thumbnailer.
+"""Configuration GUI for Nemo Folder Preview.
 
-A GUI for easily configuring Cover Thumbnailer.
+A GUI for easily configuring Nemo Folder Preview.
 """
 
 __version__ = "0.10.3"
@@ -199,7 +199,7 @@ class Conf(dict):
         try:
             user_conf_file = open(self.user_conf, 'w')
             #Warning
-            user_conf_file.write('#' + _('Configuration written by Cover Thumbnailer GUI') + "\n")
+            user_conf_file.write('#' + _('Configuration written by Nemo Folder Preview') + "\n")
             user_conf_file.write("#" + _('Please edit with caution') + "\n")
             #Music
             user_conf_file.write("\n[MUSIC]\n")
@@ -373,7 +373,7 @@ class MainWin(object):
         self.btnNeverIgnoredRemove = win.get_object("btnNeverIgnoredRemove")
 
         ### MISCELLANEOUS ###
-        #Enable Cover-Thumbnailer checkBox
+        #Enable Nemo Folder Preview checkBox
         self.cbEnableCT = win.get_object("cbEnableCT")
         #Thumbnail size spinbtn
         self.spinbtn_thumbSize = win.get_object("spinbtn_thumbSize")

@@ -19,7 +19,7 @@
   <object class="GtkFileChooserDialog" id="filechooserdialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Select a folder - Cover Thumbnailer</property>
+    <property name="title" translatable="yes">Select a folder - Nemo Folder Preview</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
@@ -97,7 +97,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="border_width">7</property>
-    <property name="title">Cover Thumbnailer</property>
+    <property name="title">Nemo Folder Preview</property>
     <property name="resizable">False</property>
     <property name="icon">icon.png</property>
     <signal name="destroy" handler="on_winMain_destroy" swapped="no"/>
@@ -161,7 +161,7 @@
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkCheckButton" id="cbMusicEnable">
-                            <property name="label" translatable="yes">Enable Cover Thumbnailer for music folders</property>
+                            <property name="label" translatable="yes">Enable Nemo Folder Preview for music folders</property>
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -599,7 +599,7 @@
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkCheckButton" id="cbPicturesEnable">
-                            <property name="label" translatable="yes">Enable Cover Thumbnailer for picture folders</property>
+                            <property name="label" translatable="yes">Enable Nemo Folder Preview for picture folders</property>
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -859,7 +859,7 @@
                     <property name="right_padding">10</property>
                     <child>
                       <object class="GtkCheckButton" id="cbOtherEnable">
-                        <property name="label" translatable="yes">Enable Cover Thumbnailer for other folders</property>
+                        <property name="label" translatable="yes">Enable Nemo Folder Preview for other folders</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -1290,7 +1290,7 @@
                               <object class="GtkImage">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">This button allows to select a folder and to generate thumbnails for each subfolder it contains. This option is useful for Nautilus as Cover Thumbnailer is not able to generate thumbnails automatically for this file browser.</property>
+                                <property name="tooltip_text" translatable="yes">This button generates previews for each subfolder. It is useful for Nautilus, where automatic preview generation is restricted.</property>
                                 <property name="stock">gtk-help</property>
                               </object>
                               <packing>
@@ -1429,7 +1429,7 @@
   <object class="GtkMessageDialog" id="msgdlgErrorPAIL">
     <property name="can_focus">False</property>
     <property name="margin_bottom">1</property>
-    <property name="title" translatable="yes">Error - Cover Thumbnailer</property>
+    <property name="title" translatable="yes">Error - Nemo Folder Preview</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -1523,7 +1523,7 @@
   <object class="GtkAboutDialog" id="winAbout">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">About Cover Thumbnailer</property>
+    <property name="title" translatable="yes">About Nemo Folder Preview</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -1532,8 +1532,8 @@
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">winMain</property>
-    <property name="program_name">Cover Thumbnailer</property>
-    <property name="comments" translatable="yes">Configuration tool for Cover Thumbnailer</property>
+    <property name="program_name">Nemo Folder Preview</property>
+    <property name="comments" translatable="yes">Photo folder previews for Linux Mint Cinnamon and Nemo</property>
     <property name="website">https://github.com/flozz/cover-thumbnailer</property>
     <property name="license" translatable="yes">This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

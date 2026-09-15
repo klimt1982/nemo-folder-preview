@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Cover Thumbnailer
-GenericName=Cover Thumbnailer
-Comment=Configuration tool for Cover Thumbnailer
+Name=Nemo Folder Preview
+GenericName=Nemo Folder Preview
+Comment=Photo folder previews for Linux Mint Cinnamon and Nemo
 Comment[fr]=Outil de configuration pour Cover Thumbnailer
 Categories=Settings;
 Exec=cover-thumbnailer-gui
