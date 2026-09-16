@@ -9,6 +9,8 @@ folder shape based on the selected Mint-Y icon theme.
 
 The result is a folder preview that looks at home in Cinnamon.
 
+![Nemo showing one to four photo previews inside Mint-Y folders](./screenshots/nemo-folder-preview.png)
+
 ## Scope
 
 Nemo Folder Preview is intentionally focused on:
