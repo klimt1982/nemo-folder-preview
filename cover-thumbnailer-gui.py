@@ -40,8 +40,8 @@ A GUI for easily configuring Nemo Folder Preview.
 """
 
 __version__ = "0.10.3"
-__author__ = "Fabien LOISON <http://www.flozz.fr/>"
-__copyright__ = "Copyright © 2009 - 2026 Fabien LOISON"
+__author__ = "Lucas Gustavo Quiroga (fork maintainer); Fabien Loison (original author)"
+__copyright__ = "Copyright © 2026 Lucas Gustavo Quiroga\nBased on Cover Thumbnailer © 2009-2026 Fabien Loison"
 __appname__ = "cover-thumbnailer-gui"
 
 
@@ -341,8 +341,17 @@ class MainWin(object):
 
         self.winAbout = win.get_object("winAbout")
         self.winAbout.connect("response", self.on_winAbout_response)
+        self.winAbout.set_program_name("Nemo Folder Preview")
         self.winAbout.set_version(__version__)
         self.winAbout.set_copyright(__copyright__)
+        self.winAbout.set_website(None)
+        self.winAbout.set_comments(
+            _("Photo folder previews for Linux Mint Cinnamon and Nemo.")
+        )
+        self.winAbout.set_authors([
+            "Lucas Gustavo Quiroga - fork development and maintenance",
+            "Fabien Loison - original Cover Thumbnailer author",
+        ])
 
         ### MUSIC ###
         #Music path list
