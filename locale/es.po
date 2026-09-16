@@ -166,7 +166,7 @@ msgstr ""
 
 #: share/cover-thumbnailer-gui.glade:1277
 msgid "Select a folder and generate thumbnails"
-msgstr ""
+msgstr "Seleccioná una carpeta y generá las miniaturas"
 
 #: share/cover-thumbnailer-gui.glade:1293
 msgid ""
@@ -270,3 +270,48 @@ msgstr ""
 
 #~ msgid "Translate Cover Thumbnailer"
 #~ msgstr "Traducir Cover Thumbnailer"
+
+msgid "Appearance"
+msgstr "Apariencia"
+
+msgid "Appearance and maintenance"
+msgstr "Apariencia y mantenimiento"
+
+msgid "Interface preferences"
+msgstr "Preferencias de interfaz"
+
+msgid "Use system setting"
+msgstr "Usar configuración del sistema"
+
+msgid "Light"
+msgstr "Claro"
+
+msgid "Dark"
+msgstr "Oscuro"
+
+msgid "Interface theme:"
+msgstr "Tema de la interfaz:"
+
+msgid "Language:"
+msgstr "Idioma:"
+
+msgid "System language"
+msgstr "Idioma del sistema"
+
+msgid "Spanish"
+msgstr "Español"
+
+msgid "English"
+msgstr "Inglés"
+
+msgid "Language changes take effect when you reopen Nemo Folder Preview."
+msgstr "El cambio de idioma se aplicará al volver a abrir Nemo Folder Preview."
+
+msgid "Folder theme:"
+msgstr "Tema de las carpetas:"
+
+msgid "Automatic (current Cinnamon theme)"
+msgstr "Automático (tema actual de Cinnamon)"
+
+msgid "Enable Nemo Folder Preview for picture folders"
+msgstr "Habilitar Nemo Folder Preview para carpetas de imágenes"

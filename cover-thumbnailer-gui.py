@@ -59,7 +59,46 @@ from gi.repository import Gtk as gtk
 from gi.repository import Gio
 
 
-gettext.install(__appname__)
+def _configured_language():
+    """Read the UI language before gettext is initialised."""
+    config = os.path.join(os.path.expanduser("~"), ".cover-thumbnailer", "cover-thumbnailer.conf")
+    section = ""
+    try:
+        lines = open(config, encoding="utf-8")
+    except OSError:
+        return "system"
+    with lines:
+        for raw_line in lines:
+            line = raw_line.strip()
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1].lower()
+            elif section == "appearance" and line.lower().startswith("language") and "=" in line:
+                return line.split("=", 1)[1].strip().strip('"').lower()
+    return "system"
+
+
+_language = _configured_language()
+if _language in ("es", "en"):
+    os.environ["LANGUAGE"] = _language
+
+gettext.install(__appname__, localedir="/usr/share/locale")
+
+
+_system_dark_preference = None
+
+
+def apply_interface_theme(theme):
+    """Apply a preference without changing Cinnamon's global setting."""
+    global _system_dark_preference
+    settings = gtk.Settings.get_default()
+    if _system_dark_preference is None:
+        _system_dark_preference = settings.get_property("gtk-application-prefer-dark-theme")
+    preference = {
+        "dark": True,
+        "light": False,
+        "system": _system_dark_preference,
+    }.get(theme, _system_dark_preference)
+    settings.set_property("gtk-application-prefer-dark-theme", preference)
 
 
 #Base path
@@ -99,6 +138,9 @@ class Conf(dict):
         self['pictures_theme'] = 'auto'
         self['pictures_paths'] = []
         self['pictures_gnomefolderpath'] = _("<None>")
+        # Interface
+        self['appearance_theme'] = 'system'
+        self['appearance_language'] = 'system'
         #Other
         self['other_enabled'] = True
         #Ignored
@@ -160,6 +202,10 @@ class Conf(dict):
                     else:
                         value = False
                     self[current_section + "_" + key] = value
+                #String keys
+                elif re.match(r'\s*(theme|language)\s*=\s*"([^"]+)"\s*', line, re.I):
+                    match = re.match(r'\s*(theme|language)\s*=\s*"([^"]+)"\s*', line, re.I)
+                    self[current_section + "_" + match.group(1).lower()] = match.group(2).lower()
                 #String key : path
                 elif re.match(r"\s*(path|PATH|Path)\s*=\s*\"(.+)\"\s*", line):
                     match = re.match(r"\s*(path|PATH|Path)\s*=\s*\"(.+)\"\s*", line)
@@ -217,6 +263,10 @@ class Conf(dict):
             user_conf_file.write(self._write_int("pictures_maxthumbs"))
             user_conf_file.write('theme = "%s"\\n' % self["pictures_theme"])
             user_conf_file.write(self._write_list("pictures_paths"))
+            #Appearance
+            user_conf_file.write("\n[APPEARANCE]\n")
+            user_conf_file.write('theme = "%s"\n' % self["appearance_theme"])
+            user_conf_file.write('language = "%s"\n' % self["appearance_language"])
             #Other
             user_conf_file.write("\n[OTHER]\n")
             user_conf_file.write(self._write_bool("other_enabled"))
@@ -280,6 +330,14 @@ class MainWin(object):
         win.set_translation_domain(__appname__)
         #FIXME: GtkWarning: Ignoring the separator setting (wtf ?!)
         win.add_from_file(os.path.join(BASE_PATH, "cover-thumbnailer-gui.glade"))
+
+        # Nemo Folder Preview only exposes photo folder previews.
+        self.notebook = win.get_object("notebook1")
+        self.notebook.remove_page(0)
+        self.notebook.remove_page(1)
+        appearance_page = win.get_object("vbox11")
+        self.notebook.get_tab_label(appearance_page).set_text(_("Appearance"))
+        win.get_object("label15").set_text(_("Appearance and maintenance"))
 
         self.winAbout = win.get_object("winAbout")
         self.winAbout.connect("response", self.on_winAbout_response)
@@ -378,6 +436,43 @@ class MainWin(object):
         #Thumbnail size spinbtn
         self.spinbtn_thumbSize = win.get_object("spinbtn_thumbSize")
 
+        # Appearance controls are added here instead of altering the legacy Glade layout.
+        appearance_box = win.get_object("vbox12")
+        appearance_box.pack_start(gtk.Separator(), False, False, 4)
+        heading = gtk.Label(label=_("Interface preferences"))
+        heading.set_xalign(0)
+        appearance_box.pack_start(heading, False, False, 0)
+
+        self.cmbInterfaceTheme = gtk.ComboBoxText()
+        self.cmbInterfaceTheme.append("system", _("Use system setting"))
+        self.cmbInterfaceTheme.append("light", _("Light"))
+        self.cmbInterfaceTheme.append("dark", _("Dark"))
+        theme_row = gtk.Box(spacing=8)
+        theme_label = gtk.Label(label=_("Interface theme:"))
+        theme_label.set_xalign(0)
+        theme_row.pack_start(theme_label, False, False, 0)
+        theme_row.pack_start(self.cmbInterfaceTheme, True, True, 0)
+        appearance_box.pack_start(theme_row, False, False, 0)
+
+        self.cmbInterfaceLanguage = gtk.ComboBoxText()
+        self.cmbInterfaceLanguage.append("system", _("System language"))
+        self.cmbInterfaceLanguage.append("es", _("Spanish"))
+        self.cmbInterfaceLanguage.append("en", _("English"))
+        language_row = gtk.Box(spacing=8)
+        language_label = gtk.Label(label=_("Language:"))
+        language_label.set_xalign(0)
+        language_row.pack_start(language_label, False, False, 0)
+        language_row.pack_start(self.cmbInterfaceLanguage, True, True, 0)
+        appearance_box.pack_start(language_row, False, False, 0)
+        restart_note = gtk.Label(label=_("Language changes take effect when you reopen Nemo Folder Preview."))
+        restart_note.set_xalign(0)
+        restart_note.set_line_wrap(True)
+        appearance_box.pack_start(restart_note, False, False, 0)
+
+        self.cmbInterfaceTheme.connect("changed", self.on_cmbInterfaceTheme_changed)
+        self.cmbInterfaceLanguage.connect("changed", self.on_cmbInterfaceLanguage_changed)
+        appearance_box.show_all()
+
         ### FileChooser Dialog ###
         self.fileChooser = win.get_object("filechooserdialog")
         self.fileChooserFor = None
@@ -390,6 +485,17 @@ class MainWin(object):
 
         loadInterface(self) #Put config on the gui
         win.connect_signals(self)
+
+    def on_cmbInterfaceTheme_changed(self, widget):
+        theme = self.cmbInterfaceTheme.get_active_id()
+        if theme:
+            CONF['appearance_theme'] = theme
+            apply_interface_theme(theme)
+
+    def on_cmbInterfaceLanguage_changed(self, widget):
+        language = self.cmbInterfaceLanguage.get_active_id()
+        if language:
+            CONF['appearance_language'] = language
 
     ### WINMAIN ###
     def on_winMain_destroy(self, widget):
@@ -655,6 +761,10 @@ def loadInterface(gui):
         gui.spinbtn_maxThumbs.set_value(CONF['pictures_maxthumbs'])
     if not gui.cmbPicturesTheme.set_active_id(CONF['pictures_theme']):
         gui.cmbPicturesTheme.set_active_id("auto")
+    if not gui.cmbInterfaceTheme.set_active_id(CONF['appearance_theme']):
+        gui.cmbInterfaceTheme.set_active_id("system")
+    if not gui.cmbInterfaceLanguage.set_active_id(CONF['appearance_language']):
+        gui.cmbInterfaceLanguage.set_active_id("system")
     #Other
     gui.cbOtherEnable.set_active(CONF['other_enabled'])
     #Ignored
@@ -680,5 +790,6 @@ def loadInterface(gui):
 
 if __name__ == "__main__":
     CONF = Conf()
+    apply_interface_theme(CONF["appearance_theme"])
     gui = MainWin()
     gtk.main()
