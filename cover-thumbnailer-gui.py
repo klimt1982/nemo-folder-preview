@@ -6,13 +6,14 @@
 ##           ┏━╸┏━┓╻ ╻┏━╸┏━┓   ╺┳╸╻ ╻╻ ╻┏┳┓┏┓ ┏┓╻┏━┓╻╻  ┏━╸┏━┓            ##
 ##           ┃  ┃ ┃┃┏┛┣╸ ┣┳┛    ┃ ┣━┫┃ ┃┃┃┃┣┻┓┃┗┫┣━┫┃┃  ┣╸ ┣┳┛            ##
 ##           ┗━╸┗━┛┗┛ ┗━╸╹┗╸    ╹ ╹ ╹┗━┛╹ ╹┗━┛╹ ╹╹ ╹╹┗━╸┗━╸╹┗╸            ##
-##                         — www.flogisoft.com —                          ##
+##            Nemo Folder Preview — Linux Mint Cinnamon and Nemo          ##
 ##                                                                        ##
 ############################################################################
 ##                                                                        ##
 ## Cover thumbnailer GUI                                                  ##
 ##                                                                        ##
-## Copyright (C) 2009 - 2026  Fabien LOISON <http://www.flozz.fr/>        ##
+## Original copyright (C) 2009 - 2026 Fabien Loison                       ##
+## Fork modifications (C) 2026 Lucas Gustavo Quiroga                       ##
 ##                                                                        ##
 ## This program is free software: you can redistribute it and/or modify   ##
 ## it under the terms of the GNU General Public License as published by   ##
@@ -29,7 +30,7 @@
 ##                                                                        ##
 ############################################################################
 ##                                                                        ##
-## WEB SITE : https://github.com/flozz/cover-thumbnailer                  ##
+## UPSTREAM PROJECT : https://github.com/flozz/cover-thumbnailer           ##
 ##                                                                       ##
 #########################################################################
 
@@ -112,7 +113,7 @@ class Conf(dict):
 
     """ Import configuration.
 
-    Import configuration from the GNOME and cover thumbnailer files
+    Import configuration from GNOME and inherited settings files
     """
 
     def __init__(self):

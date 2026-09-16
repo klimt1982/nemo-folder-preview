@@ -1534,7 +1534,6 @@
     <property name="transient_for">winMain</property>
     <property name="program_name">Nemo Folder Preview</property>
     <property name="comments" translatable="yes">Photo folder previews for Linux Mint Cinnamon and Nemo</property>
-    <property name="website">https://github.com/flozz/cover-thumbnailer</property>
     <property name="license" translatable="yes">This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -1547,10 +1546,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.</property>
-    <property name="authors">Fabien LOISON &lt;flo@flogisoft.com&gt;</property>
-    <property name="documenters">Fabien LOISON &lt;flo@flogisoft.com&gt;</property>
+    <property name="authors">Lucas Gustavo Quiroga</property>
+    <property name="documenters">Lucas Gustavo Quiroga</property>
     <property name="translator_credits" translatable="yes">translator-credits</property>
-    <property name="artists">Fabien LOISON &lt;flo@flogisoft.com&gt;</property>
+    <property name="artists">Lucas Gustavo Quiroga</property>
     <property name="logo">logo.png</property>
     <signal name="delete-event" handler="on_winAbout_delete_event" swapped="no"/>
     <child type="titlebar">

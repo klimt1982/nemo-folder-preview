@@ -5,13 +5,14 @@
 ##           ┏━╸┏━┓╻ ╻┏━╸┏━┓   ╺┳╸╻ ╻╻ ╻┏┳┓┏┓ ┏┓╻┏━┓╻╻  ┏━╸┏━┓            ##
 ##           ┃  ┃ ┃┃┏┛┣╸ ┣┳┛    ┃ ┣━┫┃ ┃┃┃┃┣┻┓┃┗┫┣━┫┃┃  ┣╸ ┣┳┛            ##
 ##           ┗━╸┗━┛┗┛ ┗━╸╹┗╸    ╹ ╹ ╹┗━┛╹ ╹┗━┛╹ ╹╹ ╹╹┗━╸┗━╸╹┗╸            ##
-##                         — www.flogisoft.com —                          ##
+##            Nemo Folder Preview — Linux Mint Cinnamon and Nemo          ##
 ##                                                                        ##
 ############################################################################
 ##                                                                        ##
 ## Cover thumbnailer — Installer                                          ##
 ##                                                                        ##
-## Copyright (C) 2009 - 2026  Fabien Loison <flo at flogisoft dot com>    ##
+## Original copyright (C) 2009 - 2026 Fabien Loison                       ##
+## Fork modifications (C) 2026 Lucas Gustavo Quiroga                       ##
 ##                                                                        ##
 ## This program is free software: you can redistribute it and/or modify   ##
 ## it under the terms of the GNU General Public License as published by   ##
@@ -29,11 +30,11 @@
 ############################################################################
 ##                                                                        ##
 ## VERSION : 0.10.3 (Sun Apr 5 10:50:35 CEST 2026)                        ##
-## WEB SITE : https://github.com/flozz/cover-thumbnailer                  ##
+## UPSTREAM PROJECT : https://github.com/flozz/cover-thumbnailer           ##
 ##                                                                       ##
 #########################################################################
 
-SOFTWARE="Cover Thumbnailer"
+SOFTWARE="Nemo Folder Preview"
 DESC="Displays music album covers in Nautilus and more..."
 LOGFILE="/tmp/cover-thumbnailer$1_$$.log"
 
