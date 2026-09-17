@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+TryExec=nemo-folder-preview
+Exec=nemo-folder-preview %u %o
+MimeType=inode/directory;

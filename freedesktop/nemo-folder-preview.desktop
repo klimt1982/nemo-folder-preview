@@ -6,5 +6,5 @@ GenericName=Nemo Folder Preview
 Comment=Photo folder previews for Linux Mint Cinnamon and Nemo
 Comment[fr]=Outil de configuration de Nemo Folder Preview
 Categories=Settings;
-Exec=cover-thumbnailer-gui
-Icon=/usr/share/cover-thumbnailer/icon.png
+Exec=nemo-folder-preview-gui
+Icon=/usr/share/nemo-folder-preview/icon.png

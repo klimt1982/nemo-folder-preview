@@ -110,7 +110,7 @@ msgstr "El número máximo de imágenes en miniatura:"
 
 #: share/cover-thumbnailer-gui.glade:684
 msgid "List of picture folders:"
-msgstr "Lista ca carpetas de imágenes"
+msgstr "Lista de carpetas de imágenes"
 
 #: share/cover-thumbnailer-gui.glade:823
 msgid "Pictures"

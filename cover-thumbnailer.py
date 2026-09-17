@@ -42,7 +42,7 @@ default folder icons. It has a specific presentation for music and pictures
 folders, and a generic one for other folders.
 
 Usage:
-    cover-thumbnailer <directory's path> <output thumbnail's path>
+    nemo-folder-preview <directory's path> <output thumbnail's path>
 """
 
 __version__ = "0.10.3"
@@ -66,7 +66,7 @@ except:
 if "DEVEL" in os.environ:
     BASE_PATH = "./share/" #For devel
 else:
-    BASE_PATH = "/usr/share/cover-thumbnailer/"
+    BASE_PATH = "/usr/share/nemo-folder-preview/"
 
 #Cover files list
 COVER_FILES = ["cover.png", "cover.jpg", ".cover.png", ".cover.jpg",
@@ -136,9 +136,16 @@ class Conf(dict):
                 self.user_homedir,
                 ".config/user-dirs.dirs"
                 )
-        self.user_conf = os.path.join(
-                self.user_homedir,
-                ".cover-thumbnailer/cover-thumbnailer.conf"
+        self.user_config_dir = os.path.join(
+                self.user_homedir, ".config", "nemo-folder-preview"
+                )
+        self.user_new_conf = os.path.join(self.user_config_dir, "config.conf")
+        self.user_legacy_conf = os.path.join(
+                self.user_homedir, ".cover-thumbnailer", "cover-thumbnailer.conf"
+                )
+        self.user_conf = (
+                self.user_new_conf if os.path.isfile(self.user_new_conf)
+                else self.user_legacy_conf
                 )
         #Read configuration
         self.import_user_conf()
@@ -248,7 +255,7 @@ def prepare_picture_theme(conf):
         )
 
     cache_dir = os.path.join(
-        os.environ.get("HOME", ""), ".cache", "cover-thumbnailer", "themes", theme
+        os.environ.get("HOME", ""), ".cache", "nemo-folder-preview", "themes", theme
     )
     os.makedirs(cache_dir, exist_ok=True)
 
@@ -309,7 +316,7 @@ def prepare_picture_theme(conf):
         )
 
     cache_dir = os.path.join(
-        os.environ.get("HOME", ""), ".cache", "cover-thumbnailer", "themes", theme
+        os.environ.get("HOME", ""), ".cache", "nemo-folder-preview", "themes", theme
     )
     os.makedirs(cache_dir, exist_ok=True)
 

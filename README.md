@@ -57,7 +57,7 @@ The current installer keeps the original technical command name for
 compatibility, so it can also be opened from a terminal with:
 
 ```bash
-cover-thumbnailer-gui
+nemo-folder-preview-gui
 ```
 
 ## Configuration
@@ -80,13 +80,13 @@ For compatibility with the inherited thumbnailer integration, configuration is
 currently stored in:
 
 ```text
-~/.cover-thumbnailer/cover-thumbnailer.conf
+~/.config/nemo-folder-preview/config.conf
 ```
 
 ## Uninstall
 
 ```bash
-sudo /usr/share/cover-thumbnailer/uninstall.sh --remove
+sudo /usr/share/nemo-folder-preview/uninstall.sh --remove
 ```
 
 ## Status

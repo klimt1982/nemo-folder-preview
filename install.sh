@@ -35,8 +35,8 @@
 #########################################################################
 
 SOFTWARE="Nemo Folder Preview"
-DESC="Displays music album covers in Nautilus and more..."
-LOGFILE="/tmp/cover-thumbnailer$1_$$.log"
+DESC="Photo folder previews for Linux Mint Cinnamon and Nemo"
+LOGFILE="/tmp/nemo-folder-preview$1_$$.log"
 
 
 _install() {
@@ -50,45 +50,45 @@ _install() {
 
 	#/usr/bin
 	mkdir -pv "$1"/usr/bin 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./cover-thumbnailer.py "$1"/usr/bin/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
-	chmod -v 755 "$1"/usr/bin/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./cover-thumbnailer-gui.py "$1"/usr/bin/cover-thumbnailer-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
-	chmod -v 755 "$1"/usr/bin/cover-thumbnailer-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./cover-thumbnailer.py "$1"/usr/bin/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	chmod -v 755 "$1"/usr/bin/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./cover-thumbnailer-gui.py "$1"/usr/bin/nemo-folder-preview-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
+	chmod -v 755 "$1"/usr/bin/nemo-folder-preview-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/cover-thumbnailer/
-	mkdir -pv "$1"/usr/share/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -rv ./share/* "$1"/usr/share/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	mkdir -pv "$1"/usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -rv ./share/* "$1"/usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/man/man1
 	mkdir -pv "$1"/usr/share/man/man1 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./man/cover-thumbnailer.1 "$1"/usr/share/man/man1/ 1>> $LOGFILE 2>> $LOGFILE || error=1
-	gzip --best -f "$1"/usr/share/man/man1/cover-thumbnailer.1 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./man/cover-thumbnailer-gui.1 "$1"/usr/share/man/man1/ 1>> $LOGFILE 2>> $LOGFILE || error=1
-	gzip --best -f "$1"/usr/share/man/man1/cover-thumbnailer-gui.1 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./man/nemo-folder-preview.1 "$1"/usr/share/man/man1/ 1>> $LOGFILE 2>> $LOGFILE || error=1
+	gzip --best -f "$1"/usr/share/man/man1/nemo-folder-preview.1 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./man/nemo-folder-preview-gui.1 "$1"/usr/share/man/man1/ 1>> $LOGFILE 2>> $LOGFILE || error=1
+	gzip --best -f "$1"/usr/share/man/man1/nemo-folder-preview-gui.1 1>> $LOGFILE 2>> $LOGFILE || error=1
 
-	#/usr/share/doc/cover-thumbnailer
-	mkdir -pv "$1"/usr/share/doc/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./README.md "$1"/usr/share/doc/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	#/usr/share/doc/nemo-folder-preview
+	mkdir -pv "$1"/usr/share/doc/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./README.md "$1"/usr/share/doc/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/locale/xx_XX/LC_MESSAGES
 	for file in `find ./locale -name "*.po"` ; do {
 		l10elang=`echo $file | sed -r 's#./locale/(.*).po#\1#g'`
 		mkdir -pv "$1"/usr/share/locale/$l10elang/LC_MESSAGES/ 1>> $LOGFILE 2>> $LOGFILE || error=1
-		msgfmt "$file" -o "$1"/usr/share/locale/$l10elang/LC_MESSAGES/cover-thumbnailer-gui.mo 1>> $LOGFILE 2>> $LOGFILE || error=1
+		msgfmt "$file" -o "$1"/usr/share/locale/$l10elang/LC_MESSAGES/nemo-folder-preview-gui.mo 1>> $LOGFILE 2>> $LOGFILE || error=1
 	} done
 
 	#/usr/share/applications
 	mkdir -pv "$1"/usr/share/applications/ 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./freedesktop/cover-thumbnailer-gui.desktop "$1"/usr/share/applications/cover-thumbnailer-gui.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./freedesktop/nemo-folder-preview.desktop "$1"/usr/share/applications/nemo-folder-preview.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/thumbnailers
 	mkdir -pv "$1"/usr/share/thumbnailers/ 1>> $LOGFILE 2>> $LOGFILE || error=1
-	cp -v ./freedesktop/cover.thumbnailer "$1"/usr/share/thumbnailers/cover.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	cp -v ./freedesktop/nemo-folder-preview.thumbnailer "$1"/usr/share/thumbnailers/nemo-folder-preview.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#uninstall.sh
 	if [ -z $1 ] ; then {
-		cp ./install.sh /usr/share/cover-thumbnailer/uninstall.sh 1>> $LOGFILE 2>> $LOGFILE || error=1
-		chmod -v 755 /usr/share/cover-thumbnailer/uninstall.sh 1>> $LOGFILE 2>> $LOGFILE || error=1
+		cp ./install.sh /usr/share/nemo-folder-preview/uninstall.sh 1>> $LOGFILE 2>> $LOGFILE || error=1
+		chmod -v 755 /usr/share/nemo-folder-preview/uninstall.sh 1>> $LOGFILE 2>> $LOGFILE || error=1
 	} fi
 
 	if [ "$error" == "1" ] ; then {
@@ -107,30 +107,30 @@ _remove() {
 	#Remove the software
 
 	#/usr/share/applications
-	rm -fv /usr/share/applications/cover-thumbnailer-gui.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -fv /usr/share/applications/nemo-folder-preview.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/cover-thumbnailer
-	rm -rfv /usr/share/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -rfv /usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/doc
-	rm -rfv /usr/share/doc/cover-thumbnailer/ 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -rfv /usr/share/doc/nemo-folder-preview/ 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/man/man1
-	rm -vf /usr/share/man/man1/cover-thumbnailer.1.gz 1>> $LOGFILE 2>> $LOGFILE || error=1
-	rm -vf /usr/share/man/man1/cover-thumbnailer-gui.1.gz 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -vf /usr/share/man/man1/nemo-folder-preview.1.gz 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -vf /usr/share/man/man1/nemo-folder-preview-gui.1.gz 1>> $LOGFILE 2>> $LOGFILE || error=1
 
-	#/usr/share/locale/xx_XX/LC_MESSAGES/cover-thumbnailer-gui.mo
+	#/usr/share/locale/xx_XX/LC_MESSAGES/nemo-folder-preview-gui.mo
 	find /usr/share/locale/ \
-		-name cover-thumbnailer-gui.mo \
+		-name nemo-folder-preview-gui.mo \
 		-exec rm -v '{}' ';' \
 		1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/bin
-	rm -vf /usr/bin/cover-thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
-	rm -vf /usr/bin/cover-thumbnailer-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -vf /usr/bin/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -vf /usr/bin/nemo-folder-preview-gui 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/thumbnailers
-	rm -vf /usr/share/thumbnailers/cover.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	rm -vf /usr/share/thumbnailers/nemo-folder-preview.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	if [ "$error" == "1" ] ; then {
 		echo "$_RED   E:$_NORMAL An error occurred when removing $SOFTWARE"
@@ -149,37 +149,28 @@ _locale() {
 
 	mkdir -pv ./locale/
 	xgettext -k_ -kN_ \
-		-o ./locale/cover-thumbnailer-gui.pot \
+		-o ./locale/nemo-folder-preview-gui.pot \
 		./cover-thumbnailer-gui.py \
 		./share/cover-thumbnailer-gui.glade
 	for lcfile in $(find ./locale/ -name "*.po") ; do {
 		echo -n "   * $lcfile"
-		msgmerge --update $lcfile ./locale/cover-thumbnailer-gui.pot
+		msgmerge --update $lcfile ./locale/nemo-folder-preview-gui.pot
 	} done
 }
 
 
 _check_for_old_version() {
-	#Checks if an older version is installed, and try to remove.
-
-	echo "   * Checking for old version..."
-	if [ -d /usr/share/cover-thumbnailer/ ] ; then { #Version >= 0.4
-		echo "     Version 0.4 or newer found."
-			if [ -x /usr/share/cover-thumbnailer/uninstall.sh ] ; then {
-				/usr/share/cover-thumbnailer/uninstall.sh --remove 1>> $LOGFILE 2>> $LOGFILE || error=1
-				if [ "$error" == "1" ] ; then {
-					echo "     E: An error occurred when removing installed version."
-					echo "     E: See the log file for more informations."
-					echo "     E: $LOGFILE"
-					exit 11
-				} else {
-					echo "     * Old version successfully removed"
-				} fi
-			} else {
-				echo "     E: Can't remove the installed version."
-				echo "     E: Remove it manually and run this script again."
-				exit 10
-			} fi
+	# Remove only an earlier Nemo Folder Preview installation.
+	# Never remove the original Cover Thumbnailer automatically.
+	if [ -d /usr/share/nemo-folder-preview/ ] ; then {
+		echo "   * Removing previous Nemo Folder Preview installation..."
+		if [ -x /usr/share/nemo-folder-preview/uninstall.sh ] ; then {
+			/usr/share/nemo-folder-preview/uninstall.sh --remove 1>> $LOGFILE 2>> $LOGFILE || error=1
+		} fi
+	} elif [ -f /usr/share/cover-thumbnailer/cover-thumbnailer-gui.py ] && \
+	grep -q "Nemo Folder Preview" /usr/share/cover-thumbnailer/cover-thumbnailer-gui.py ; then {
+		echo "   * Migrating a previous Nemo Folder Preview development installation..."
+		/usr/share/cover-thumbnailer/uninstall.sh --remove 1>> $LOGFILE 2>> $LOGFILE || error=1
 	} fi
 }
 

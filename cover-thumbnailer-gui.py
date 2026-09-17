@@ -43,7 +43,7 @@ A GUI for easily configuring Nemo Folder Preview.
 __version__ = "0.10.3"
 __author__ = "Lucas Gustavo Quiroga (fork maintainer); Fabien Loison (original author)"
 __copyright__ = "Copyright © 2026 Lucas Gustavo Quiroga\nBased on Cover Thumbnailer © 2009-2026 Fabien Loison"
-__appname__ = "cover-thumbnailer-gui"
+__appname__ = "nemo-folder-preview-gui"
 
 
 import gettext
@@ -61,20 +61,25 @@ from gi.repository import Gio
 
 
 def _configured_language():
-    """Read the UI language before gettext is initialised."""
-    config = os.path.join(os.path.expanduser("~"), ".cover-thumbnailer", "cover-thumbnailer.conf")
-    section = ""
-    try:
-        lines = open(config, encoding="utf-8")
-    except OSError:
-        return "system"
-    with lines:
-        for raw_line in lines:
-            line = raw_line.strip()
-            if line.startswith("[") and line.endswith("]"):
-                section = line[1:-1].lower()
-            elif section == "appearance" and line.lower().startswith("language") and "=" in line:
-                return line.split("=", 1)[1].strip().strip('"').lower()
+    """Read the preferred UI language before gettext is initialised."""
+    home = os.path.expanduser("~")
+    config_paths = (
+        os.path.join(home, ".config", "nemo-folder-preview", "config.conf"),
+        os.path.join(home, ".cover-thumbnailer", "cover-thumbnailer.conf"),
+    )
+    for config in config_paths:
+        section = ""
+        try:
+            lines = open(config, encoding="utf-8")
+        except OSError:
+            continue
+        with lines:
+            for raw_line in lines:
+                line = raw_line.strip()
+                if line.startswith("[") and line.endswith("]"):
+                    section = line[1:-1].lower()
+                elif section == "appearance" and line.lower().startswith("language") and "=" in line:
+                    return line.split("=", 1)[1].strip().strip('"').lower()
     return "system"
 
 
@@ -106,7 +111,7 @@ def apply_interface_theme(theme):
 if "DEVEL" in os.environ:
     BASE_PATH = "./share/" #For devel
 else:
-    BASE_PATH = "/usr/share/cover-thumbnailer/"
+    BASE_PATH = "/usr/share/nemo-folder-preview/"
 
 
 class Conf(dict):
@@ -155,9 +160,16 @@ class Conf(dict):
                 self.user_homedir,
                 ".config/user-dirs.dirs"
                 )
-        self.user_conf = os.path.join(
-                self.user_homedir,
-                ".cover-thumbnailer/cover-thumbnailer.conf"
+        self.user_config_dir = os.path.join(
+                self.user_homedir, ".config", "nemo-folder-preview"
+                )
+        self.user_new_conf = os.path.join(self.user_config_dir, "config.conf")
+        self.user_legacy_conf = os.path.join(
+                self.user_homedir, ".cover-thumbnailer", "cover-thumbnailer.conf"
+                )
+        self.user_conf = (
+                self.user_new_conf if os.path.isfile(self.user_new_conf)
+                else self.user_legacy_conf
                 )
         #Read configuration
         self.import_gnome_conf()
@@ -236,7 +248,7 @@ class Conf(dict):
     def save_user_conf(self):
         """ Save configuration file. """
         #Check if output folder exists, else create it
-        conf_dir = os.path.join(self.user_homedir, ".cover-thumbnailer")
+        conf_dir = self.user_config_dir
         if not os.path.isdir(conf_dir):
             try:
                 os.makedirs(conf_dir)
@@ -244,7 +256,7 @@ class Conf(dict):
                 print("E: [%s:Conf.save_user_conf] Can't write configuration directory (permission denied)" % __file__)
                 return
         try:
-            user_conf_file = open(self.user_conf, 'w')
+            user_conf_file = open(self.user_new_conf, 'w')
             #Warning
             user_conf_file.write('#' + _('Configuration written by Nemo Folder Preview') + "\n")
             user_conf_file.write("#" + _('Please edit with caution') + "\n")
@@ -696,7 +708,7 @@ def generate_thumbnail_path(path):
 
 
 def generateThumbnails(path):
-    CT_CMD = 'cover-thumbnailer'
+    CT_CMD = 'nemo-folder-preview'
     if "DEVEL" in os.environ:
         CT_CMD = './cover-thumbnailer.py'
     for input_folder in list_folders(path):
