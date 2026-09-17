@@ -75,15 +75,11 @@ COVER_FILES = ["cover.png", "cover.jpg", ".cover.png", ".cover.jpg",
         "Folder.png", "Folder.jpg", ".Folder.png", ".Folder.jpg"]
 
 #Supported picture ext (ALWAY LAST 4 CHARS !!)
-PICTURES_EXT = [".jpg", ".JPG", "jpeg", "JPEG",
-        ".png", ".PNG", #Not interlaced
-        ".gif", ".GIF",
-        ".bmp", ".BMP", #Window ans OS/2 bitmap
-        ".ico", ".ICO", #Windows icon format
-        ".tga", ".TGA", #Truevision Targa format
-        ".tif", ".TIF", "tiff", "TIFF", #Adobe Tagged Image File Format
-        ".psd", ".PSD", #Adobe Photosop format (only version 2.5 and 3.0)
-        ]
+# Supported picture extensions
+PICTURES_EXT = {
+        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".ico",
+        ".tga", ".tif", ".tiff", ".psd", ".webp",
+        }
 
 #==============================================================================
 
@@ -579,43 +575,33 @@ def search_cover(path):
     return cover_path
 
 
+def is_supported_picture(filename):
+    """Return whether filename has a supported image extension."""
+    return os.path.splitext(filename)[1].lower() in PICTURES_EXT
+
+
 def search_pictures(path):
-    """ Search for pictures in the folder
-
-    Search for pictures in the folder and return their name as a list (or an
-    empty list if no pictures were found).
-
-    Argument:
-      * path -- the path of the folder
-    """
-    files = os.listdir(path)
+    """Return up to four supported images directly inside path."""
     pictures = []
-    for file_ in files:
-        if file_[-4:] in PICTURES_EXT:
-            pictures.append(os.path.join(path, file_))
-        if len(pictures) >= 4: #4 pictures max... don't need more
-            break
+    for filename in sorted(os.listdir(path)):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) and is_supported_picture(filename):
+            pictures.append(file_path)
+            if len(pictures) >= 4:
+                break
     return pictures
 
 
 def search_pictures_recursiv(path):
-    """ Search recursively for pictures in the folder
-
-    Search for pictures in the subfolders and return their name as a list
-    (or an empty list if no pictures were found).
-
-    Argument:
-      * path -- the path of the folder
-    """
+    """Return up to four supported images found recursively inside path."""
     pictures = []
     for root, dirs, files in os.walk(path):
-        if len(pictures) <= 4: #4 pictures max... don't need more
-            for file_ in files:
-                if file_[-4:] in PICTURES_EXT:
-                    pictures.append(os.path.join(path, root, file_))
-                    break
-        else:
-            break
+        dirs.sort()
+        for filename in sorted(files):
+            if is_supported_picture(filename):
+                pictures.append(os.path.join(root, filename))
+                if len(pictures) >= 4:
+                    return pictures
     return pictures
 
 

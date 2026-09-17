@@ -3,8 +3,8 @@
 **Photo folder previews that match Mint-Y.**
 
 Nemo Folder Preview creates thumbnails for photo folders in **Nemo**, the file
-manager used by Linux Mint Cinnamon. Instead of replacing a folder with a
-generic portfolio or CD-case icon, it shows up to four image previews inside a
+manager used by Linux Mint Cinnamon. Instead of a
+plain generic folder icon, it shows up to four image previews inside a
 folder shape based on the selected Mint-Y icon theme.
 
 The result is a folder preview that looks at home in Cinnamon.
@@ -26,6 +26,7 @@ or a generic cross-desktop folder-preview implementation.
 ## Features
 
 * Shows one to four photos as a mosaic inside a Mint-Y folder icon.
+* Supports JPEG, PNG, GIF, BMP, TIFF, WebP and other Pillow-compatible image formats.
 * Uses the current Cinnamon Mint-Y theme automatically, or lets you choose a
   specific Mint-Y variant.
 * Works with the XDG Pictures directory and with folders added in the
@@ -53,8 +54,7 @@ sudo ./install.sh --install
 
 Open **Nemo Folder Preview** from the Cinnamon menu to configure it.
 
-The current installer keeps the original technical command name for
-compatibility, so it can also be opened from a terminal with:
+It can also be opened from a terminal with:
 
 ```bash
 nemo-folder-preview-gui
@@ -76,8 +76,7 @@ application is opened.
 After changing the theme or preview style, clear the thumbnail cache or refresh
 Nemo if an existing folder still displays an older thumbnail.
 
-For compatibility with the inherited thumbnailer integration, configuration is
-currently stored in:
+Configuration is stored in:
 
 ```text
 ~/.config/nemo-folder-preview/config.conf
