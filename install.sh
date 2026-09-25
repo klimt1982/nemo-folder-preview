@@ -80,10 +80,12 @@ _install() {
 	#/usr/share/applications
 	mkdir -pv "$1"/usr/share/applications/ 1>> $LOGFILE 2>> $LOGFILE || error=1
 	cp -v ./freedesktop/nemo-folder-preview.desktop "$1"/usr/share/applications/nemo-folder-preview.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
+	chmod -v 644 "$1"/usr/share/applications/nemo-folder-preview.desktop 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/thumbnailers
 	mkdir -pv "$1"/usr/share/thumbnailers/ 1>> $LOGFILE 2>> $LOGFILE || error=1
 	cp -v ./freedesktop/nemo-folder-preview.thumbnailer "$1"/usr/share/thumbnailers/nemo-folder-preview.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
+	chmod -v 644 "$1"/usr/share/thumbnailers/nemo-folder-preview.thumbnailer 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#uninstall.sh
 	if [ -z $1 ] ; then {
