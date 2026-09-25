@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cover-thumbnailer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 17:59+0200\n"
+"POT-Creation-Date: 2026-09-25 01:39-0300\n"
 "PO-Revision-Date: 2011-03-05 18:20+0000\n"
 "Last-Translator: Fabien LOISON (FLOZz) <flo@flogisoft.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -18,194 +18,190 @@ msgstr ""
 "X-Launchpad-Export-Date: 2017-06-23 05:43+0000\n"
 "X-Generator: Launchpad (build 18416)\n"
 
-#: cover-thumbnailer-gui.py:93 cover-thumbnailer-gui.py:100
-#: cover-thumbnailer-gui.py:642 cover-thumbnailer-gui.py:647
+#: cover-thumbnailer-gui.py:138 cover-thumbnailer-gui.py:699
 msgid "<None>"
 msgstr "<Ingen>"
 
-#: cover-thumbnailer-gui.py:201
-msgid "Configuration written by Cover Thumbnailer GUI"
+#: cover-thumbnailer-gui.py:252
+msgid "Configuration written by Nemo Folder Preview"
 msgstr ""
 
-#: cover-thumbnailer-gui.py:202
+#: cover-thumbnailer-gui.py:253
 msgid "Please edit with caution"
 msgstr "Redigera med försiktighet"
 
-#. %s will be replaced by the folder path and must be kept unchanged.
-#: cover-thumbnailer-gui.py:606 share/cover-thumbnailer-gui.glade:530
-#, python-format
-msgid "Enable for GNOME's music folder (%s)"
-msgstr "Aktivera för GNOME:s musikmapp (%s)"
+#: cover-thumbnailer-gui.py:330
+msgid "Appearance"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:331
+msgid "Appearance and maintenance"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:340
+msgid "Photo folder previews for Linux Mint Cinnamon and Nemo."
+msgstr ""
+
+#: cover-thumbnailer-gui.py:367
+msgid "Automatic (current Cinnamon theme)"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:375
+msgid "Folder theme:"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:416
+msgid "Interface preferences"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:421
+msgid "Use system setting"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:422
+msgid "Light"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:423
+msgid "Dark"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:425
+msgid "Interface theme:"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:432
+msgid "System language"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:433
+msgid "Spanish"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:434
+msgid "English"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:436
+msgid "Language:"
+msgstr ""
+
+#: cover-thumbnailer-gui.py:441
+msgid "Language changes take effect when you reopen Nemo Folder Preview."
+msgstr ""
 
 #. %s will be replaced by the folder path and must be kept unchanged.
-#: cover-thumbnailer-gui.py:621 share/cover-thumbnailer-gui.glade:790
+#: cover-thumbnailer-gui.py:674 share/cover-thumbnailer-gui.glade:353
 #, python-format
 msgid "Enable for GNOME's picture folder (%s)"
 msgstr "Aktivera för GNOME:s bildmapp (%s)"
 
 #: share/cover-thumbnailer-gui.glade:22
-msgid "Select a folder - Cover Thumbnailer"
+msgid "Select a folder - Nemo Folder Preview"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:137
-msgid "Music Folders"
-msgstr "Musikmappar"
-
-#: share/cover-thumbnailer-gui.glade:164
-msgid "Enable Cover Thumbnailer for music folders"
-msgstr "Aktivera Cover Thumbnailer för musikmappar"
-
-#: share/cover-thumbnailer-gui.glade:180
-msgid "Keep the default folder icon if no cover was found"
-msgstr "Använd standardikoner för mappar när inga omslag hittas"
-
-#: share/cover-thumbnailer-gui.glade:215
-msgid "Resize method:"
-msgstr ""
-
-#: share/cover-thumbnailer-gui.glade:236
-msgid "Crop"
-msgstr "Beskär"
-
-#: share/cover-thumbnailer-gui.glade:253
-msgid "Preserve"
-msgstr "Bevara"
-
-#: share/cover-thumbnailer-gui.glade:319
-msgid "Allow mosaic:"
-msgstr "Tillåt mosaik:"
-
-#: share/cover-thumbnailer-gui.glade:356
-msgid "No"
-msgstr "Nej"
-
-#: share/cover-thumbnailer-gui.glade:373
-msgid "Yes"
-msgstr "Ja"
-
-#: share/cover-thumbnailer-gui.glade:424
-msgid "List of music folders:"
-msgstr ""
-
-#: share/cover-thumbnailer-gui.glade:560
-msgid "Music"
-msgstr "Musik"
-
-#: share/cover-thumbnailer-gui.glade:575
+#: share/cover-thumbnailer-gui.glade:138
 msgid "Picture Folders"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:602
-msgid "Enable Cover Thumbnailer for picture folders"
-msgstr ""
+#: share/cover-thumbnailer-gui.glade:165
+#, fuzzy
+msgid "Enable Nemo Folder Preview for picture folders"
+msgstr "Aktivera Cover Thumbnailer för musikmappar"
 
-#: share/cover-thumbnailer-gui.glade:618
+#: share/cover-thumbnailer-gui.glade:181
 msgid "Keep the default folder icon if no pictures were found"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:641
+#: share/cover-thumbnailer-gui.glade:204
 msgid "Maximum number of pictures on thumbnail:"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:684
+#: share/cover-thumbnailer-gui.glade:247
 msgid "List of picture folders:"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:823
+#: share/cover-thumbnailer-gui.glade:386
 msgid "Pictures"
 msgstr "Bilder"
 
-#: share/cover-thumbnailer-gui.glade:839
-msgid "Other Folders"
-msgstr ""
-
-#: share/cover-thumbnailer-gui.glade:862
-msgid "Enable Cover Thumbnailer for other folders"
-msgstr ""
-
-#: share/cover-thumbnailer-gui.glade:887
-msgid "Others"
-msgstr ""
-
-#: share/cover-thumbnailer-gui.glade:903
+#: share/cover-thumbnailer-gui.glade:403
 msgid "Ignored Folders"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:930
+#: share/cover-thumbnailer-gui.glade:430
 msgid "Ignore hidden folders (folders whose name starts with a dot)"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:954
+#: share/cover-thumbnailer-gui.glade:454
 msgid "Folders to ignore:"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1067
+#: share/cover-thumbnailer-gui.glade:567
 msgid "Folders to never ignore:"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1188
+#: share/cover-thumbnailer-gui.glade:688
 msgid "Ignored"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1203
+#: share/cover-thumbnailer-gui.glade:703
 msgid "Miscellaneous Options"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1236
+#: share/cover-thumbnailer-gui.glade:736
 msgid "Clear thumbnail cache"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1254
+#: share/cover-thumbnailer-gui.glade:754
 msgid ""
 "Clear the thumbnail cache if you have some problem with thumbnails, for "
 "example after changing the configuration."
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1277
+#: share/cover-thumbnailer-gui.glade:777
 msgid "Select a folder and generate thumbnails"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1293
+#: share/cover-thumbnailer-gui.glade:793
 msgid ""
-"This button allows to select a folder and to generate thumbnails for each "
-"subfolder it contains. This option is useful for Nautilus as Cover "
-"Thumbnailer is not able to generate thumbnails automatically for this file "
-"browser."
+"This button generates previews for each subfolder. It is useful for "
+"Nautilus, where automatic preview generation is restricted."
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1327
+#: share/cover-thumbnailer-gui.glade:827
 msgid "Miscellaneous"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1432
-msgid "Error - Cover Thumbnailer"
+#: share/cover-thumbnailer-gui.glade:932
+msgid "Error - Nemo Folder Preview"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1442
+#: share/cover-thumbnailer-gui.glade:942
 msgid "Can’t add this path"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1443
+#: share/cover-thumbnailer-gui.glade:943
 msgid "This path was already in the list!"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1495
+#: share/cover-thumbnailer-gui.glade:995
 msgid "Generating thumbnails"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1496
+#: share/cover-thumbnailer-gui.glade:996
 msgid "Please wait..."
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1526
-msgid "About Cover Thumbnailer"
+#: share/cover-thumbnailer-gui.glade:1026
+msgid "About Nemo Folder Preview"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1536
-msgid "Configuration tool for Cover Thumbnailer"
+#: share/cover-thumbnailer-gui.glade:1036
+msgid "Photo folder previews for Linux Mint Cinnamon and Nemo"
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1538
+#: share/cover-thumbnailer-gui.glade:1037
 msgid ""
 "This program is free software: you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -221,7 +217,7 @@ msgid ""
 "along with this program. If not, see <http://www.gnu.org/licenses/>."
 msgstr ""
 
-#: share/cover-thumbnailer-gui.glade:1552
+#: share/cover-thumbnailer-gui.glade:1051
 msgid "translator-credits"
 msgstr ""
 "Launchpad Contributions:\n"
@@ -229,3 +225,31 @@ msgstr ""
 "  Magnus Helmersson https://launchpad.net/~magnus-helmersson\n"
 "  Nils-Martin Andersson https://launchpad.net/~nalinde\n"
 "  Torbjörn Lönnemark https://launchpad.net/~tobbez"
+
+#, python-format
+#~ msgid "Enable for GNOME's music folder (%s)"
+#~ msgstr "Aktivera för GNOME:s musikmapp (%s)"
+
+#~ msgid "Music Folders"
+#~ msgstr "Musikmappar"
+
+#~ msgid "Keep the default folder icon if no cover was found"
+#~ msgstr "Använd standardikoner för mappar när inga omslag hittas"
+
+#~ msgid "Crop"
+#~ msgstr "Beskär"
+
+#~ msgid "Preserve"
+#~ msgstr "Bevara"
+
+#~ msgid "Allow mosaic:"
+#~ msgstr "Tillåt mosaik:"
+
+#~ msgid "No"
+#~ msgstr "Nej"
+
+#~ msgid "Yes"
+#~ msgstr "Ja"
+
+#~ msgid "Music"
+#~ msgstr "Musik"

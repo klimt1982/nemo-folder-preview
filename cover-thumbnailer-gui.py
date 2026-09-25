@@ -128,14 +128,6 @@ class Conf(dict):
         """
         #Initialize the dictionary
         dict.__init__(self)
-        #Music
-        self['music_enabled'] = True
-        self['music_keepdefaulticon'] = False
-        self['music_usegnomefolder'] = True
-        self['music_cropimg'] = True
-        self['music_makemosaic'] = False
-        self['music_paths'] = []
-        self['music_gnomefolderpath'] = _("<None>")
         #Pictures
         self['pictures_enabled'] = True
         self['pictures_keepdefaulticon'] = False
@@ -176,21 +168,19 @@ class Conf(dict):
         self.import_user_conf()
 
     def import_gnome_conf(self):
-        """ Import user folders from GNOME configuration file. """
-        if os.path.isfile(self.user_gnomeconf):
-            gnome_conf_file = open(self.user_gnomeconf, 'r')
-            for line in gnome_conf_file:
-                if re.match(r'.*?XDG_MUSIC_DIR.*?=.*?"(.*)".*?', line):
-                    match = re.match(r'.*?XDG_MUSIC_DIR.*?=.*?"(.*)".*?', line)
-                    path = match.group(1).replace('$HOME', self.user_homedir)
-                    self['music_gnomefolderpath'] = path
-                elif re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line):
-                    match = re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line)
-                    path = match.group(1).replace('$HOME', self.user_homedir)
-                    self['pictures_gnomefolderpath'] = path
-            gnome_conf_file.close()
-        else:
+        """Import the XDG Pictures directory from user-dirs.dirs."""
+        if not os.path.isfile(self.user_gnomeconf):
             print("W: [%s:Conf.import_gnome_conf] Can't find `user-dirs.dirs' file." % __file__)
+            return
+
+        with open(self.user_gnomeconf, 'r') as gnome_conf_file:
+            for line in gnome_conf_file:
+                match = re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line)
+                if not match:
+                    continue
+                self['pictures_gnomefolderpath'] = match.group(1).replace(
+                    '$HOME', self.user_homedir
+                )
 
     def import_user_conf(self):
         """ Import user configuration file. """
@@ -224,7 +214,9 @@ class Conf(dict):
                     match = re.match(r"\s*(path|PATH|Path)\s*=\s*\"(.+)\"\s*", line)
                     key = "paths"
                     value = match.group(2)
-                    self[current_section + "_" + key].append(value)
+                    target_key = current_section + "_" + key
+                    if target_key in self:
+                        self[target_key].append(value)
                 #Integer key
                 elif re.match(r"\s*([a-z]+)\s*=\s*([0-9]+)\s*", line.lower()):
                     match = re.match(r"\s*([a-z]+)\s*=\s*([0-9]+)\s*", line.lower())
@@ -235,14 +227,13 @@ class Conf(dict):
             user_conf_file.close()
 
             #Replace "~/" by the user home dir
-            for path_list in (self['music_paths'], self['pictures_paths'], self['ignored_paths']):
+            for path_list in (self['pictures_paths'], self['ignored_paths']):
                 for i in range(0, len(path_list)):
                     if path_list[i][0] == "~":
                         path_list[i] = os.path.join(self.user_homedir, path_list[i][2:])
 
             #Import "useGnomeConf" key (for compatibility)
             if "miscellaneous_usegnomeconf" in self:
-                self["music_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
                 self["pictures_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
 
     def save_user_conf(self):
@@ -260,29 +251,18 @@ class Conf(dict):
             #Warning
             user_conf_file.write('#' + _('Configuration written by Nemo Folder Preview') + "\n")
             user_conf_file.write("#" + _('Please edit with caution') + "\n")
-            #Music
-            user_conf_file.write("\n[MUSIC]\n")
-            user_conf_file.write(self._write_bool("music_enabled"))
-            user_conf_file.write(self._write_bool("music_keepdefaulticon"))
-            user_conf_file.write(self._write_bool("music_usegnomefolder"))
-            user_conf_file.write(self._write_bool("music_cropimg"))
-            user_conf_file.write(self._write_bool("music_makemosaic"))
-            user_conf_file.write(self._write_list("music_paths"))
             #Pictures
             user_conf_file.write("\n[PICTURES]\n")
             user_conf_file.write(self._write_bool("pictures_enabled"))
             user_conf_file.write(self._write_bool("pictures_keepdefaulticon"))
             user_conf_file.write(self._write_bool("pictures_usegnomefolder"))
             user_conf_file.write(self._write_int("pictures_maxthumbs"))
-            user_conf_file.write('theme = "%s"\\n' % self["pictures_theme"])
+            user_conf_file.write('theme = "%s"\n' % self["pictures_theme"])
             user_conf_file.write(self._write_list("pictures_paths"))
             #Appearance
             user_conf_file.write("\n[APPEARANCE]\n")
             user_conf_file.write('theme = "%s"\n' % self["appearance_theme"])
             user_conf_file.write('language = "%s"\n' % self["appearance_language"])
-            #Other
-            user_conf_file.write("\n[OTHER]\n")
-            user_conf_file.write(self._write_bool("other_enabled"))
             #Ignored
             user_conf_file.write("\n[IGNORED]\n")
             user_conf_file.write(self._write_bool("ignored_dotted"))
@@ -346,8 +326,6 @@ class MainWin(object):
 
         # Nemo Folder Preview only exposes photo folder previews.
         self.notebook = win.get_object("notebook1")
-        self.notebook.remove_page(0)
-        self.notebook.remove_page(1)
         appearance_page = win.get_object("vbox11")
         self.notebook.get_tab_label(appearance_page).set_text(_("Appearance"))
         win.get_object("label15").set_text(_("Appearance and maintenance"))
@@ -365,28 +343,6 @@ class MainWin(object):
             "Lucas Gustavo Quiroga - fork development and maintenance",
             "Fabien Loison - original Cover Thumbnailer author",
         ])
-
-        ### MUSIC ###
-        #Music path list
-        self.trvMusicPathList = win.get_object("trvMusicPathList")
-        self.lsstMusicPathList = gtk.ListStore(str)
-        self.trvMusicPathList.set_model(self.lsstMusicPathList)
-        self.columnMusicPathList = gtk.TreeViewColumn("Path", gtk.CellRendererText(), text=0)
-        self.trvMusicPathList.append_column(self.columnMusicPathList)
-        #MusicRemove button
-        self.btnMusicRemove = win.get_object("btnMusicRemove")
-        #GNOME music folder checkBox
-        self.cb_useGnomeMusic = win.get_object("cb_useGnomeMusic")
-        #Enable checkBox
-        self.cbMusicEnable = win.get_object("cbMusicEnable")
-        #KeepIcon checkBox
-        self.cbMusicKeepFIcon = win.get_object("cbMusicKeepFIcon")
-        #rbMusicCrop and rbMusicPreserve radiobuttons
-        self.rbMusicCrop = win.get_object("rbMusicCrop")
-        self.rbMusicPreserve = win.get_object("rbMusicPreserve")
-        #rbMusicNoMosaic and rbMusicMosaic radiobuttons
-        self.rbMusicNoMosaic = win.get_object("rbMusicNoMosaic")
-        self.rbMusicMosaic = win.get_object("rbMusicMosaic")
 
         ### PICTURES ###
         #Pictures path list
@@ -425,10 +381,6 @@ class MainWin(object):
             "changed", self.on_cmbPicturesTheme_changed
         )
         theme_row.show_all()
-
-        ### OTHER ###
-        #Enable checkBox
-        self.cbOtherEnable = win.get_object("cbOtherEnable")
 
         ### IGNORED ###
         #Ignored path list
@@ -533,39 +485,6 @@ class MainWin(object):
         CONF.save_user_conf()
         gtk.main_quit()
 
-    #~~~ MUSIC ~~~
-    def on_cbMusicEnable_toggled(self, widget):
-        CONF['music_enabled'] = self.cbMusicEnable.get_active()
-
-    def on_cbMusicKeepFIcon_toggled(self, widget):
-        CONF['music_keepdefaulticon'] = self.cbMusicKeepFIcon.get_active()
-
-    def on_btnMusicAdd_clicked(self, widget):
-        self.fileChooserFor = 'music'
-        self.fileChooser.show()
-
-    def on_trvMusicPathList_cursor_changed(self, widget):
-        model, iter_ = widget.get_selection().get_selected()
-        if iter_ is not None:
-            self.btnMusicRemove.set_sensitive(True)
-
-    def on_btnMusicRemove_clicked(self, widget):
-        removePathFromList(
-                self.trvMusicPathList,
-                self.lsstMusicPathList,
-                CONF['music_paths']
-                )
-        self.btnMusicRemove.set_sensitive(False)
-
-    def on_cb_useGnomeMusic_toggled(self, widget):
-        CONF['music_usegnomefolder'] = self.cb_useGnomeMusic.get_active()
-
-    def on_rbMusicCrop_toggled(self, widget):
-        CONF['music_cropimg'] = self.rbMusicCrop.get_active()
-
-    def on_rbMusicNoMosaic_toggled(self, widget):
-        CONF['music_makemosaic'] = self.rbMusicMosaic.get_active()
-
     #~~~ PICTURES ~~~
     def on_cbPicturesEnable_toggled(self, widget):
         CONF['pictures_enabled'] = self.cbPicturesEnable.get_active()
@@ -600,10 +519,6 @@ class MainWin(object):
 
     def on_cb_useGnomePictures_toggled(self, widget):
         CONF['pictures_usegnomefolder'] = self.cb_useGnomePictures.get_active()
-
-    #~~~ OTHER ~~~
-    def on_cbOtherEnable_toggled(self, widget):
-        CONF['other_enabled'] = self.cbOtherEnable.get_active()
 
     #~~~ IGNORED ~~~
     def on_btnIgnoredAdd_clicked(self, widget):
@@ -653,9 +568,7 @@ class MainWin(object):
     def on_btnFileChooserOpen_clicked(self, widget):
         self.fileChooser.hide()
         path = self.fileChooser.get_filename()
-        if self.fileChooserFor == 'music':
-            addPathToList(self.lsstMusicPathList, path, CONF['music_paths'])
-        elif self.fileChooserFor == 'pictures':
+        if self.fileChooserFor == 'pictures':
             addPathToList(self.lsstPicturesPathList, path, CONF['pictures_paths'])
         elif self.fileChooserFor == 'ignored':
             addPathToList(self.lsstIgnoredPathList, path, CONF['ignored_paths'])
@@ -753,21 +666,6 @@ def loadInterface(gui):
     Argument:
       * gui -- the gui
     """
-    #Music
-    gui.cbMusicEnable.set_active(CONF['music_enabled'])
-    gui.cbMusicKeepFIcon.set_active(CONF['music_keepdefaulticon'])
-    for path in CONF['music_paths']:
-        gui.lsstMusicPathList.append([path])
-    gui.cb_useGnomeMusic.set_label(_("Enable for GNOME's music folder (%s)") %(CONF['music_gnomefolderpath']))
-    gui.cb_useGnomeMusic.set_active(CONF['music_usegnomefolder'])
-    if CONF['music_cropimg']:
-        gui.rbMusicCrop.set_active(True)
-    else:
-        gui.rbMusicPreserve.set_active(True)
-    if CONF['music_makemosaic']:
-        gui.rbMusicMosaic.set_active(True)
-    else:
-        gui.rbMusicNoMosaic.set_active(True)
     #Pictures
     gui.cbPicturesEnable.set_active(CONF['pictures_enabled'])
     gui.cbPicturesKeepFIcon.set_active(CONF['pictures_keepdefaulticon'])
@@ -787,8 +685,6 @@ def loadInterface(gui):
         gui.cmbInterfaceTheme.set_active_id("system")
     if not gui.cmbInterfaceLanguage.set_active_id(CONF['appearance_language']):
         gui.cmbInterfaceLanguage.set_active_id("system")
-    #Other
-    gui.cbOtherEnable.set_active(CONF['other_enabled'])
     #Ignored
     gui.cbIgnoreHidden.set_active(CONF['ignored_dotted'])
     for path in CONF['ignored_paths']:
@@ -798,11 +694,6 @@ def loadInterface(gui):
         gui.lsstNeverIgnoredPathList.append([path])
     #If GNOME folders == user home dir or not defined,
     #deactivate the option, it's probably a misconfiguration !
-    if os.path.isdir(CONF['music_gnomefolderpath']) \
-        and os.path.samefile(CONF['music_gnomefolderpath'], CONF.user_homedir) \
-        or CONF['music_gnomefolderpath'] == _("<None>"):
-        gui.cb_useGnomeMusic.set_active(False)
-        gui.cb_useGnomeMusic.set_sensitive(False)
     if os.path.isdir(CONF['pictures_gnomefolderpath']) \
         and os.path.samefile(CONF['pictures_gnomefolderpath'], CONF.user_homedir) \
         or CONF['pictures_gnomefolderpath'] == _("<None>"):
