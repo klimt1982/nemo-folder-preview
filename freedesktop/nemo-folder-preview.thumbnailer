@@ -1,4 +1,4 @@
 [Thumbnailer Entry]
 TryExec=nemo-folder-preview
-Exec=nemo-folder-preview %u %o
+Exec=nemo-folder-preview %u %o %s
 MimeType=inode/directory;

@@ -38,8 +38,7 @@
 """Generates thumbnails for nautilus' folders.
 
 Nemo Folder Preview generates thumbnails that are displayed instead of the
-default folder icons. It has a specific presentation for music and pictures
-folders, and a generic one for other folders.
+photo folder previews in Nemo using the active Mint-Y icon theme.
 
 Usage:
     nemo-folder-preview <directory's path> <output thumbnail's path>
@@ -68,12 +67,6 @@ if "DEVEL" in os.environ:
 else:
     BASE_PATH = "/usr/share/nemo-folder-preview/"
 
-#Cover files list
-COVER_FILES = ["cover.png", "cover.jpg", ".cover.png", ".cover.jpg",
-        "Cover.png", "Cover.jpg", ".Cover.png", ".Cover.jpg",
-        "folder.png", "folder.jpg", ".folder.png", ".folder.jpg",
-        "Folder.png", "Folder.jpg", ".Folder.png", ".Folder.jpg"]
-
 #Supported picture ext (ALWAY LAST 4 CHARS !!)
 # Supported picture extensions
 PICTURES_EXT = {
@@ -98,29 +91,15 @@ class Conf(dict):
         """
         #Initialize the dictionary
         dict.__init__(self)
-        #Music
-        self['music_enabled'] = True
-        self['music_keepdefaulticon'] = False
-        self['music_usegnomefolder'] = True
-        self['music_cropimg'] = True
-        self['music_makemosaic'] = False
-        self['music_paths'] = []
-        self['music_defaultimg'] = os.path.join(BASE_PATH, "music_default.png")
-        self['music_fg'] = os.path.join(BASE_PATH, "music_fg.png")
-        self['music_bg'] = os.path.join(BASE_PATH, "music_bg.png")
         #Pictures
         self['pictures_enabled'] = True
         self['pictures_keepdefaulticon'] = False
         self['pictures_usegnomefolder'] = True
         self['pictures_maxthumbs'] = 3
         self['pictures_theme'] = 'auto'
-        self['pictures_theme'] = 'auto'
         self['pictures_paths'] = []
         self['pictures_fg'] = os.path.join(BASE_PATH, "pictures_fg.png")
         self['pictures_bg'] = os.path.join(BASE_PATH, "pictures_bg.png")
-        #Other
-        self['other_enabled'] = True
-        self['other_fg'] = os.path.join(BASE_PATH, 'other_fg.png')
         #Ignored
         self['ignored_dotted'] = False
         self['ignored_paths'] = []
@@ -148,24 +127,19 @@ class Conf(dict):
         self.import_gnome_conf()
 
     def import_gnome_conf(self):
-        """ Import user folders from GNOME configuration file. """
-        if os.path.isfile(self.user_gnomeconf):
-            with open(self.user_gnomeconf, 'r') as gnome_conf_file:
-                for line in gnome_conf_file:
-                    if re.match(r'.*?XDG_MUSIC_DIR.*?=.*?"(.*)".*?', line) and self['music_usegnomefolder']:
-                        match = re.match(r'.*?XDG_MUSIC_DIR.*?=.*?"(.*)".*?', line)
-                        path = match.group(1).replace('$HOME', self.user_homedir)
-                        #If path == user home dir, don't use it, it's probably a misconfiguration !
-                        if os.path.isdir(path) and not os.path.samefile(path, self.user_homedir):
-                            self['music_paths'].append(path)
-                    elif re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line) and self['pictures_usegnomefolder']:
-                        match = re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line)
-                        path = match.group(1).replace('$HOME', self.user_homedir)
-                        #If path == user home dir, don't use it, it's probably a misconfiguration !
-                        if os.path.isdir(path) and not os.path.samefile(path, self.user_homedir):
-                            self['pictures_paths'].append(path)
-        else:
+        """Import the XDG Pictures directory from user-dirs.dirs."""
+        if not os.path.isfile(self.user_gnomeconf):
             print("W: [%s:Conf.import_gnome_conf] Can't find `user-dirs.dirs' file." % __file__)
+            return
+
+        with open(self.user_gnomeconf, 'r') as gnome_conf_file:
+            for line in gnome_conf_file:
+                match = re.match(r'.*?XDG_PICTURES_DIR.*?=.*?"(.*)".*?', line)
+                if not match or not self['pictures_usegnomefolder']:
+                    continue
+                path = match.group(1).replace('$HOME', self.user_homedir)
+                if os.path.isdir(path) and not os.path.samefile(path, self.user_homedir):
+                    self['pictures_paths'].append(path)
 
     def import_user_conf(self):
         """ Import user configuration file. """
@@ -214,25 +188,39 @@ class Conf(dict):
                         self[current_section + "_" + key] = int(value)
 
             #Replace "~/" by the user home dir
-            for path_list in (self['music_paths'], self['pictures_paths'], self['ignored_paths']):
+            for path_list in (self['pictures_paths'], self['ignored_paths']):
                 for i in range(0, len(path_list)):
                     if path_list[i][0] == "~":
                         path_list[i] = os.path.join(self.user_homedir, path_list[i][2:])
 
-            #Import "useGnomeConf" key (for compatibility)
+            #Import legacy global preference for compatibility.
             if "miscellaneous_usegnomeconf" in self:
-                self["music_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
                 self["pictures_usegnomefolder"] = self["miscellaneous_usegnomeconf"]
 
 
 
-def prepare_picture_theme(conf):
-    """Generate picture-folder frame assets from a Mint-Y icon theme."""
+def _folder_icon_path(theme):
+    """Return the best available PNG folder icon for a Mint-Y theme."""
+    for size_dir in ("128@2x", "128"):
+        candidate = os.path.join(
+            "/usr/share/icons", theme, "places", size_dir, "folder.png"
+        )
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def prepare_picture_theme(conf, requested_size):
+    """Generate a scalable Mint-Y folder frame for picture previews."""
     from PIL import ImageDraw
 
-    requested_theme = conf.get("pictures_theme", "auto")
-    theme = requested_theme
+    try:
+        size = int(requested_size)
+    except (TypeError, ValueError):
+        size = 128
+    size = min(max(size, 128), 512)
 
+    theme = conf.get("pictures_theme", "auto")
     if theme == "auto":
         theme = os.popen(
             "gsettings get org.cinnamon.desktop.interface icon-theme 2>/dev/null"
@@ -241,17 +229,20 @@ def prepare_picture_theme(conf):
     if not theme.startswith("Mint-Y") or "/" in theme:
         theme = "Mint-Y"
 
-    folder_path = os.path.join(
-        "/usr/share/icons", theme, "places", "128", "folder.png"
-    )
-    if not os.path.isfile(folder_path):
+    folder_path = _folder_icon_path(theme)
+    if folder_path is None:
         theme = "Mint-Y"
-        folder_path = os.path.join(
-            "/usr/share/icons", theme, "places", "128", "folder.png"
-        )
+        folder_path = _folder_icon_path(theme)
+    if folder_path is None:
+        raise RuntimeError("Unable to find a Mint-Y folder icon")
 
     cache_dir = os.path.join(
-        os.environ.get("HOME", ""), ".cache", "nemo-folder-preview", "themes", theme
+        os.environ.get("HOME", ""),
+        ".cache",
+        "nemo-folder-preview",
+        "themes",
+        theme,
+        str(size),
     )
     os.makedirs(cache_dir, exist_ok=True)
 
@@ -259,93 +250,44 @@ def prepare_picture_theme(conf):
     fg_path = os.path.join(cache_dir, "pictures_fg.png")
 
     if not (os.path.isfile(bg_path) and os.path.isfile(fg_path)):
-        size = 128
-        scale = 4
-        inner = (14, 42, 114, 110)
-
-        def box(coords):
-            return tuple(value * scale for value in coords)
-
+        supersample = 4
+        scale = (size / 128) * supersample
         folder = Image.open(folder_path).convert("RGBA")
-        base_color = folder.getpixel((64, 80))
+        sample_x = round(folder.width * 64 / 128)
+        sample_y = round(folder.height * 80 / 128)
+        base_color = folder.getpixel((sample_x, sample_y))
 
-        bg = Image.new("RGBA", (size * scale, size * scale), (0, 0, 0, 0))
+        def scaled_box(coords):
+            return tuple(round(value * scale) for value in coords)
+
+        inner = (14, 42, 114, 110)
+        canvas_size = size * supersample
+
+        bg = Image.new("RGBA", (canvas_size, canvas_size), (0, 0, 0, 0))
         draw = ImageDraw.Draw(bg)
         draw.rounded_rectangle(
-            box(inner), radius=5 * scale, fill=base_color
+            scaled_box(inner),
+            radius=max(1, round(5 * scale)),
+            fill=base_color,
         )
         bg.resize((size, size), Image.Resampling.LANCZOS).save(bg_path)
 
-        fg = folder.resize((size * scale, size * scale), Image.Resampling.LANCZOS)
+        fg = folder.resize(
+            (canvas_size, canvas_size), Image.Resampling.LANCZOS
+        )
         alpha = fg.getchannel("A")
         draw = ImageDraw.Draw(alpha)
-        draw.rounded_rectangle(box(inner), radius=5 * scale, fill=0)
+        draw.rounded_rectangle(
+            scaled_box(inner),
+            radius=max(1, round(5 * scale)),
+            fill=0,
+        )
         fg.putalpha(alpha)
         fg.resize((size, size), Image.Resampling.LANCZOS).save(fg_path)
 
     conf["pictures_bg"] = bg_path
     conf["pictures_fg"] = fg_path
 
-
-def prepare_picture_theme(conf):
-    """Generate picture-folder frame assets from a Mint-Y icon theme."""
-    from PIL import ImageDraw
-
-    requested_theme = conf.get("pictures_theme", "auto")
-    theme = requested_theme
-
-    if theme == "auto":
-        theme = os.popen(
-            "gsettings get org.cinnamon.desktop.interface icon-theme 2>/dev/null"
-        ).read().strip().strip("'")
-
-    if not theme.startswith("Mint-Y") or "/" in theme:
-        theme = "Mint-Y"
-
-    folder_path = os.path.join(
-        "/usr/share/icons", theme, "places", "128", "folder.png"
-    )
-    if not os.path.isfile(folder_path):
-        theme = "Mint-Y"
-        folder_path = os.path.join(
-            "/usr/share/icons", theme, "places", "128", "folder.png"
-        )
-
-    cache_dir = os.path.join(
-        os.environ.get("HOME", ""), ".cache", "nemo-folder-preview", "themes", theme
-    )
-    os.makedirs(cache_dir, exist_ok=True)
-
-    bg_path = os.path.join(cache_dir, "pictures_bg.png")
-    fg_path = os.path.join(cache_dir, "pictures_fg.png")
-
-    if not (os.path.isfile(bg_path) and os.path.isfile(fg_path)):
-        size = 128
-        scale = 4
-        inner = (14, 42, 114, 110)
-
-        def box(coords):
-            return tuple(value * scale for value in coords)
-
-        folder = Image.open(folder_path).convert("RGBA")
-        base_color = folder.getpixel((64, 80))
-
-        bg = Image.new("RGBA", (size * scale, size * scale), (0, 0, 0, 0))
-        draw = ImageDraw.Draw(bg)
-        draw.rounded_rectangle(
-            box(inner), radius=5 * scale, fill=base_color
-        )
-        bg.resize((size, size), Image.Resampling.LANCZOS).save(bg_path)
-
-        fg = folder.resize((size * scale, size * scale), Image.Resampling.LANCZOS)
-        alpha = fg.getchannel("A")
-        draw = ImageDraw.Draw(alpha)
-        draw.rounded_rectangle(box(inner), radius=5 * scale, fill=0)
-        fg.putalpha(alpha)
-        fg.resize((size, size), Image.Resampling.LANCZOS).save(fg_path)
-
-    conf["pictures_bg"] = bg_path
-    conf["pictures_fg"] = fg_path
 
 class Thumb(object):
     """ Makes thumbnails.
@@ -399,95 +341,18 @@ class Thumb(object):
         image.thumbnail((twidth, theight), Image.LANCZOS)
         return image
 
-    def music_thumbnail(self, bg_picture, fg_picture, crop=True):
-        """ Makes thumbnails for music folders.
-
-        Argument:
-          * bg_picture -- the background picture
-          * fg_picture -- the foreground picture
-          * crop -- the resize method (True for having a squared thumbnail)
-        """
-        #Background picture
-        bg = Image.open(bg_picture).convert("RGB")
-        bg_width = bg.size[0]
-        bg_height = bg.size[1]
-        #Album cover
-        cover = self.thumbnailize(self.img[0], bg_height, crop=crop)
-        cover_width = cover.size[0]
-        cover_height = cover.size[1]
-        #Cover position on background
-        delta = bg_width - bg_height #The left border of album
-        x = int((bg_width - cover_width + delta) / 2)
-        y = int((bg_height - cover_height) / 2)
-        #Past cover on background
-        bg.paste(cover, (x, y), cover)
-        #Forground picture
-        fg = Image.open(fg_picture).convert("RGBA")
-        #Past forground on background+cover
-        bg.paste(fg, (0, 0), fg)
-        self.thumb = bg
-
-    def music_thumbnail_mosaic(self, bg_picture, fg_picture, crop=True):
-        """ Makes thumbnails composed by more than one cover for music folders.
-
-        Argument:
-          * bg_picture -- the background picture
-          * fg_picture -- the foreground picture
-          * crop -- the resize method (True for having a squared thumbnail)
-
-        NOTE: call this function ONLY if self.img has, at least, two pictures.
-        """
-        #Background picture
-        bg = Image.open(bg_picture).convert("RGB")
-        bg_width = bg.size[0]
-        bg_height = bg.size[1]
-        #Album covers
-        covers_thumb = []
-        for img in self.img:
-            cover_thumb = self.thumbnailize(img, int(bg_height / 2), crop=crop)
-            cover_thumb_width = cover_thumb.size[0]
-            cover_thumb_height = cover_thumb.size[1]
-            covers_thumb.append({
-                'cover': cover_thumb,
-                'width': cover_thumb_width,
-                'height': cover_thumb_height
-                })
-        #For having 4 covers for the mosaic
-        if len(covers_thumb) == 2:
-            covers_thumb.append(covers_thumb[1].copy())
-            covers_thumb.append(covers_thumb[0].copy())
-        elif len(covers_thumb) == 3:
-            covers_thumb.append(covers_thumb[0].copy())
-        #Covers position on background
-        delta = bg_width - bg_height #The left border of album
-        covers_thumb[0]['x'] = int(1*(bg_width - delta)/4 - covers_thumb[0]['width']/2 + delta)
-        covers_thumb[0]['y'] = int(1*bg_height/4 - covers_thumb[0]['height']/2)
-        covers_thumb[1]['x'] = int(3*(bg_width - delta)/4 - covers_thumb[1]['width']/2 + delta)
-        covers_thumb[1]['y'] = int(1*bg_height/4 - covers_thumb[1]['height']/2)
-        covers_thumb[2]['x'] = int(1*(bg_width - delta)/4 - covers_thumb[2]['width']/2 + delta)
-        covers_thumb[2]['y'] = int(3*bg_height/4 - covers_thumb[2]['height']/2)
-        covers_thumb[3]['x'] = int(3*(bg_width - delta)/4 - covers_thumb[3]['width']/2 + delta)
-        covers_thumb[3]['y'] = int(3*bg_height/4 - covers_thumb[3]['height']/2)
-        #Paste covers on background
-        for i in range(0, 4):
-            bg.paste(covers_thumb[i]['cover'],
-                    (covers_thumb[i]['x'], covers_thumb[i]['y']),
-                    covers_thumb[i]['cover']
-                    )
-        #Forground picture
-        fg = Image.open(fg_picture).convert("RGBA")
-        #Paste forground on background+cover
-        bg.paste(fg, (0, 0), fg)
-        self.thumb = bg
-
     def pictures_thumbnail(self, bg_picture, fg_picture, max_pictures=3):
-        """Create a Mint-Y-style folder preview for picture folders."""
+        """Create a scalable Mint-Y-style folder preview for picture folders."""
         bg = Image.open(bg_picture).convert("RGBA")
+        scale_x = bg.width / 128
+        scale_y = bg.height / 128
 
-        # Visible area inside the folder frame.
-        left, top, right, bottom = 14, 42, 114, 110
+        left = round(14 * scale_x)
+        top = round(42 * scale_y)
+        right = round(114 * scale_x)
+        bottom = round(110 * scale_y)
         width, height = right - left, bottom - top
-        gap = 3
+        gap = max(1, round(3 * min(scale_x, scale_y)))
         count = min(len(self.img), max(1, int(max_pictures)), 4)
 
         layouts = {
@@ -523,20 +388,6 @@ class Thumb(object):
         bg.alpha_composite(fg)
         self.thumb = bg
 
-    def other_thumbnail(self, fg_picture):
-        """ Makes thumbnails for "other" folders
-
-        Argument:
-          * fg_picture -- the foreground picture to add
-        """
-        fg = Image.open(fg_picture).convert("RGBA")
-        size = fg.size[0]
-        if len(self.img) == 1:
-            image = self.thumbnailize(self.img[0], size, crop=True)
-            if image.size[0] == size and image.size[1] == size:
-                image.paste(fg, (0, 0), fg)
-                self.thumb = image
-
     def save_thumb(self, output_path, output_format='PNG'):
         """ Save the thumbnail in a file.
 
@@ -556,23 +407,6 @@ class Thumb(object):
             self.thumb.save(output_path, output_format)
         else:
             print("E: [%s:Thumb.save_thumb] No thumbnail created" % __file__)
-
-
-def search_cover(path):
-    """ Search for a cover file.
-
-    Search for files like cover.png, .folder.jpg,... in the folder and return
-    its name as a list of on item (or an empty list if no pictures were found)
-
-    Argument:
-      * path -- the path of the folder
-    """
-    cover_path = []
-    for cover in COVER_FILES:
-        if os.path.isfile(os.path.join(path, cover)):
-            cover_path.append(os.path.join(path, cover))
-            break
-    return cover_path
 
 
 def is_supported_picture(filename):
@@ -640,10 +474,11 @@ def gvfs_uri_to_path(uri):
 
 
 if __name__ == "__main__":
-    #If we have 2 args
-    if len(sys.argv) == 3:
+    # Input folder, output thumbnail and optional requested size.
+    if len(sys.argv) in (3, 4):
         INPUT_FOLDER = gvfs_uri_to_path(sys.argv[1])
         OUTPUT_FILE = gvfs_uri_to_path(sys.argv[2])
+        THUMBNAIL_SIZE = sys.argv[3] if len(sys.argv) == 4 else 128
     else:
         #Display informations and usage
         print("Nemo Folder Preview - %s" % __doc__)
@@ -658,7 +493,7 @@ if __name__ == "__main__":
 
     #Load configuration
     CONF = Conf()
-    prepare_picture_theme(CONF)
+    prepare_picture_theme(CONF, THUMBNAIL_SIZE)
 
     #Ignored folders
     if match_path(INPUT_FOLDER, CONF['ignored_paths']) \
@@ -669,48 +504,12 @@ if __name__ == "__main__":
     elif CONF['ignored_dotted'] and re.match(r".*/\..*", INPUT_FOLDER):
         sys.exit(0)
 
-    #Music folders
-    elif CONF['music_enabled'] and match_path(INPUT_FOLDER, CONF['music_paths']):
-        covers = search_cover(INPUT_FOLDER)
-        if len(covers) == 0:
-            covers = search_pictures(INPUT_FOLDER)
-            if len(covers) == 0:
-                covers = search_pictures_recursiv(INPUT_FOLDER)
-                if len(covers) == 0 and not CONF['music_keepdefaulticon']:
-                    covers = [CONF['music_defaultimg']]
-        if len(covers) > 0:
-            if len(covers) == 1 or not CONF['music_makemosaic']:
-                thumbnail = Thumb([covers[0], CONF['music_defaultimg']])
-                thumbnail.music_thumbnail(
-                        CONF['music_bg'],
-                        CONF['music_fg'],
-                        CONF['music_cropimg']
-                        )
-                thumbnail.save_thumb(OUTPUT_FILE, "PNG")
-            else:
-                thumbnail = Thumb(covers)
-                thumbnail.music_thumbnail_mosaic(
-                        CONF['music_bg'],
-                        CONF['music_fg'],
-                        CONF['music_cropimg']
-                        )
-                thumbnail.save_thumb(OUTPUT_FILE, "PNG")
-        elif not CONF['music_keepdefaulticon']:
-            thumbnail = Thumb([CONF['music_defaultimg']])
-            thumbnail.music_thumbnail(
-                    CONF['music_bg'],
-                    CONF['music_fg'],
-                    CONF['music_cropimg']
-                    )
-            thumbnail.save_thumb(OUTPUT_FILE, "PNG")
-
-    #Picture folders
+    # Picture folders
     elif CONF['pictures_enabled'] and match_path(INPUT_FOLDER, CONF['pictures_paths']):
-        picture_list = search_cover(INPUT_FOLDER)
-        if len(picture_list) == 0:
-            picture_list = search_pictures(INPUT_FOLDER)
-            if len(picture_list) == 0:
-                picture_list = search_pictures_recursiv(INPUT_FOLDER)
+        picture_list = search_pictures(INPUT_FOLDER)
+        if not picture_list:
+            picture_list = search_pictures_recursiv(INPUT_FOLDER)
+
         thumbnail = Thumb(picture_list)
         thumbnail.pictures_thumbnail(
                 CONF['pictures_bg'],
@@ -718,13 +517,3 @@ if __name__ == "__main__":
                 CONF['pictures_maxthumbs']
                 )
         thumbnail.save_thumb(OUTPUT_FILE, "PNG")
-
-    #Other folders
-    elif CONF['other_enabled']:
-        covers = search_cover(INPUT_FOLDER)
-        if len(covers) == 1:
-            thumbnail = Thumb(covers)
-            thumbnail.other_thumbnail(CONF['other_fg'])
-            thumbnail.save_thumb(OUTPUT_FILE, "PNG")
-
-
