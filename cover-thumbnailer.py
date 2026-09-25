@@ -44,7 +44,7 @@ Usage:
     nemo-folder-preview <directory's path> <output thumbnail's path>
 """
 
-__version__ = "0.10.3"
+__version__ = "0.1.0"
 __author__ = "Fabien LOISON <http://www.flozz.fr/>"
 __copyright__ = "Copyright © 2009 - 2026 Fabien LOISON"
 

@@ -40,7 +40,7 @@
 A GUI for easily configuring Nemo Folder Preview.
 """
 
-__version__ = "0.10.3"
+__version__ = "0.1.0"
 __author__ = "Lucas Gustavo Quiroga (fork maintainer); Fabien Loison (original author)"
 __copyright__ = "Copyright © 2026 Lucas Gustavo Quiroga\nBased on Cover Thumbnailer © 2009-2026 Fabien Loison"
 __appname__ = "nemo-folder-preview-gui"
