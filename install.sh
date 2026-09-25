@@ -58,6 +58,7 @@ _install() {
 	#/usr/share/cover-thumbnailer/
 	mkdir -pv "$1"/usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
 	cp -rv ./share/* "$1"/usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
+	chmod -Rv a+rX "$1"/usr/share/nemo-folder-preview 1>> $LOGFILE 2>> $LOGFILE || error=1
 
 	#/usr/share/man/man1
 	mkdir -pv "$1"/usr/share/man/man1 1>> $LOGFILE 2>> $LOGFILE || error=1
