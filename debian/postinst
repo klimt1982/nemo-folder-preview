@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        rm -f /usr/share/nemo-folder-preview/uninstall.sh
+        ;;
+esac
+
+exit 0

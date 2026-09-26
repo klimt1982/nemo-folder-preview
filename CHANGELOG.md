@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-09-26
+
+- Fix the application icon association in the Cinnamon taskbar.
+
 ## 0.1.0 — 2026-09-25
 
 First release of Nemo Folder Preview, a Linux Mint Cinnamon-focused fork of

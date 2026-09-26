@@ -7,4 +7,5 @@ Comment=Photo folder previews for Linux Mint Cinnamon and Nemo
 Comment[fr]=Outil de configuration de Nemo Folder Preview
 Categories=Settings;
 Exec=nemo-folder-preview-gui
+StartupWMClass=Nemo-folder-preview-gui
 Icon=/usr/share/nemo-folder-preview/icon.png

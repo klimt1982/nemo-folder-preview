@@ -40,7 +40,7 @@
 A GUI for easily configuring Nemo Folder Preview.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Lucas Gustavo Quiroga (fork maintainer); Fabien Loison (original author)"
 __copyright__ = "Copyright © 2026 Lucas Gustavo Quiroga\nBased on Cover Thumbnailer © 2009-2026 Fabien Loison"
 __appname__ = "nemo-folder-preview-gui"
@@ -322,7 +322,10 @@ class MainWin(object):
         win = gtk.Builder()
         win.set_translation_domain(__appname__)
         #FIXME: GtkWarning: Ignoring the separator setting (wtf ?!)
+        gtk.Window.set_default_icon_from_file(os.path.join(BASE_PATH, "icon.png"))
         win.add_from_file(os.path.join(BASE_PATH, "cover-thumbnailer-gui.glade"))
+        self.winMain = win.get_object("winMain")
+        self.winMain.set_icon_from_file(os.path.join(BASE_PATH, "icon.png"))
 
         # Nemo Folder Preview only exposes photo folder previews.
         self.notebook = win.get_object("notebook1")

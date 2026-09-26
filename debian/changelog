@@ -1,0 +1,11 @@
+nemo-folder-preview (0.1.1) unstable; urgency=medium
+
+  * Fix the application icon association in the Cinnamon taskbar.
+
+ -- Lucas Gustavo Quiroga <nemofolderpreview@proton.me>  Sat, 26 Sep 2026 15:14:19 -0300
+
+nemo-folder-preview (0.1.0) unstable; urgency=medium
+
+  * Initial Debian package for Nemo Folder Preview.
+
+ -- Lucas Gustavo Quiroga <nemofolderpreview@proton.me>  Sat, 26 Sep 2026 14:57:56 -0300

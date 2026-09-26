@@ -1,0 +1,16 @@
+Source: nemo-folder-preview
+Section: utils
+Priority: optional
+Maintainer: Lucas Gustavo Quiroga <nemofolderpreview@proton.me>
+Build-Depends: debhelper-compat (= 13), gettext
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://github.com/klimt1982/nemo-folder-preview
+
+Package: nemo-folder-preview
+Architecture: all
+Depends: ${misc:Depends}, python3, python3-gi, python3-pil, gir1.2-gtk-3.0, nemo, mint-themes
+Description: Photo folder previews for Linux Mint Cinnamon and Nemo
+ Nemo Folder Preview generates photo previews inside Mint-Y folder icons
+ in the Nemo file manager. It supports one to four images, including
+ WebP, and follows the active Mint-Y icon theme.

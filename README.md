@@ -37,13 +37,27 @@ or a generic cross-desktop folder-preview implementation.
 
 ## Requirements
 
-Install the dependencies on Linux Mint:
+## Install on Linux Mint
+
+Download the latest `.deb` package from
+[GitHub Releases](https://github.com/klimt1982/nemo-folder-preview/releases).
+
+Open it with Software Manager, or install it from a terminal:
 
 ```bash
-sudo apt install gettext python3-pil python3-gi gir1.2-gtk-3.0
+sudo apt install ./nemo-folder-preview_0.1.1_all.deb
 ```
 
+This is the recommended installation method. It installs the required
+dependencies and integrates Nemo Folder Preview with the system.
+
 ## Installation from source
+
+For development or testing, install the required dependencies first:
+
+```bash
+sudo apt install gettext python3-pil python3-gi gir1.2-gtk-3.0 nemo mint-themes
+```
 
 Clone or download this repository, then run:
 
@@ -58,7 +72,6 @@ It can also be opened from a terminal with:
 
 ```bash
 nemo-folder-preview-gui
-```
 
 ## Configuration
 
@@ -83,6 +96,14 @@ Configuration is stored in:
 ```
 
 ## Uninstall
+
+If you installed the Debian package:
+
+```bash
+sudo apt remove nemo-folder-preview
+```
+
+If you installed from source:
 
 ```bash
 sudo /usr/share/nemo-folder-preview/uninstall.sh --remove

@@ -1,6 +1,6 @@
 [project]
 name = "nemo-folder-preview"
-version = "0.1.0"
+version = "0.1.1"
 description = "Photo folder previews for Linux Mint Cinnamon and Nemo"
 authors = ["Lucas Gustavo Quiroga"]
 readme = "README.md"

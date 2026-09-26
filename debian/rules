@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	for po in locale/*.po; do \
+		lang=$$(basename "$$po" .po); \
+		mkdir -p "build/locale/$$lang/LC_MESSAGES"; \
+		msgfmt -o "build/locale/$$lang/LC_MESSAGES/nemo-folder-preview-gui.mo" "$$po"; \
+	done
+
+override_dh_auto_test:
+	python3 tests/test_engine.py
+
+override_dh_auto_install:
+	install -D -m 755 cover-thumbnailer.py debian/nemo-folder-preview/usr/bin/nemo-folder-preview
+	install -D -m 755 cover-thumbnailer-gui.py debian/nemo-folder-preview/usr/bin/nemo-folder-preview-gui
+	install -d debian/nemo-folder-preview/usr/share/nemo-folder-preview
+	install -m 644 share/* debian/nemo-folder-preview/usr/share/nemo-folder-preview/
+	install -D -m 644 freedesktop/nemo-folder-preview.desktop debian/nemo-folder-preview/usr/share/applications/nemo-folder-preview.desktop
+	install -D -m 644 freedesktop/nemo-folder-preview.thumbnailer debian/nemo-folder-preview/usr/share/thumbnailers/nemo-folder-preview.thumbnailer
+	for mo in build/locale/*/LC_MESSAGES/*.mo; do \
+		lang=$$(basename $$(dirname $$(dirname "$$mo"))); \
+		install -D -m 644 "$$mo" "debian/nemo-folder-preview/usr/share/locale/$$lang/LC_MESSAGES/nemo-folder-preview-gui.mo"; \
+	done
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf build
